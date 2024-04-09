@@ -1,0 +1,155 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id         Int      @id @default(autoincrement())
+  username       String
+  password       String
+  phone_number   String
+  staff          Staff    @relation(fields: [staff_id], references: [staff_id])
+  role           Role     @relation(fields: [role_id], references: [role_id])
+  staff_id        Int
+  role_id         Int
+
+  storage       Storage[]
+}
+
+model Staff {
+  staff_id      Int      @id @default(autoincrement())
+  staff_name   String
+  gender       String
+  birthday     DateTime
+  address      String
+  phone_number String
+  email        String
+  position     String
+  salary       Float
+  start_date   DateTime
+  users  User []
+  bill Bill[]
+  
+}
+
+model Role {
+  role_id     Int      @id @default(autoincrement())
+  role_name    String
+  users  User []
+}
+
+model Storage {
+  storage_id     Int      @id @default(autoincrement())
+  goods_name     String
+  arrival_date   DateTime
+  cost_price     Decimal
+  quantity      Int
+  goods_unit     String
+  user_id        Int
+  user          User     @relation(fields: [user_id], references: [user_id])
+
+  coffeebrewingtool CoffeeBrewingTool[]
+  shopequipment     ShopEquipment[]
+  ingredient Ingredient[]
+}
+
+model CoffeeBrewingTool {
+  brewingTool_id     Int       @id @default(autoincrement())
+  storage_id         Int
+  brewingtool_name   String
+
+  storage           Storage   @relation(fields: [storage_id], references: [storage_id])
+
+}
+
+model ShopEquipment {
+  equipment_id       Int           @id @default(autoincrement())
+  storage_id         Int
+  equipmenttype_id   Int
+  equipment_name     String
+
+  storage           Storage       @relation(fields: [storage_id], references: [storage_id])
+  equipmentType     EquipmentType @relation(fields: [equipmenttype_id], references: [equipmenttype_id])
+}
+
+model EquipmentType {
+  equipmenttype_id   Int       @id @default(autoincrement())
+  equipmenttype_name String
+
+  shopequipment ShopEquipment[]
+}
+
+model Ingredient {
+  ingredient_id   Int       @id @default(autoincrement())
+  storage_id      Int
+  ingredient_name String
+
+  storage        Storage   @relation(fields: [storage_id], references: [storage_id])
+  drinkdetails DrinksDetails[]
+}
+
+model DrinksDetails {
+  drink_id          Int        
+  ingredient_id     Int        
+
+  drink         Drink    @relation(fields: [drink_id], references: [drink_id])
+  ingredient       Ingredient @relation(fields: [ingredient_id], references: [ingredient_id])
+
+  @@id([drink_id,ingredient_id])
+}
+
+model Drink {
+  drink_id         Int        @id @default(autoincrement())
+  drink_name       String
+  price           Decimal
+
+  drinkdetails DrinksDetails[]
+  menudetails MenuDetails[]
+  billdetails BillDetails[]
+}
+
+model MenuDetails {
+  menu_id        Int      
+  drink_id        Int   
+
+  menu          Menu     @relation(fields: [menu_id], references: [menu_id])
+  drink         Drink    @relation(fields: [drink_id], references: [drink_id])
+  @@id([menu_id,drink_id])
+}
+
+model Menu {
+  menu_id      Int      @id @default(autoincrement())
+  menu_name    String
+
+  menudetails MenuDetails[]
+}
+
+model Bill {
+  bill_id       Int       @id @default(autoincrement())
+  staff_id      Int
+  bill_date     DateTime
+  total_price   Decimal
+  staff        Staff     @relation(fields: [staff_id], references: [staff_id])
+
+  billdetails BillDetails[]
+}
+
+model BillDetails {
+  bill_id           Int
+  drink_id          Int
+  price            Decimal
+  quantity         Int
+  bill             Bill     @relation(fields: [bill_id], references: [bill_id])
+  drink            Drink    @relation(fields: [drink_id], references: [drink_id])
+  @@id([bill_id,drink_id])
+}
