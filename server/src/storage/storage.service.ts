@@ -23,18 +23,24 @@ export class StorageService {
   }
 
   findAll() {
-    return `This action returns all storage`;
+    return this.prisma.storage.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} storage`;
+  async findOne(id: number) {
+    const goods = await this.prisma.storage.findUnique({
+      where: {storage_id: id}
+    })
+    return goods;
   }
 
   update(id: number, updateStorageDto: UpdateStorageDto) {
-    return `This action updates a #${id} storage`;
+    return this.prisma.storage.update({
+      where: {storage_id: id},
+      data: updateStorageDto
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} storage`;
+    return this.prisma.storage.delete({where: {storage_id: id}});
   }
 }
