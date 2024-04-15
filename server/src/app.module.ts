@@ -11,10 +11,22 @@ import { DrinksModule } from './drinks/drinks.module';
 import { CoffeeBrewingToolsModule } from './coffee-brewing-tools/coffee-brewing-tools.module';
 import { ShopEquipmentModule } from './shop-equipment/shop-equipment.module';
 import { EquipmentTypeModule } from './equipment-type/equipment-type.module';
+import { AuthModule } from './auth/auth.module';
+
 
 @Module({
-  imports: [UsersModule, PrismaModule, RoleModule, StaffModule, StorageModule, IngredientModule, DrinksModule, CoffeeBrewingToolsModule, ShopEquipmentModule, EquipmentTypeModule],
+  imports: [UsersModule,
+    PrismaModule,
+    RoleModule,
+    StaffModule,
+    StorageModule,
+    IngredientModule,
+    DrinksModule,
+    CoffeeBrewingToolsModule,
+    ShopEquipmentModule,
+    EquipmentTypeModule,
+    AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
