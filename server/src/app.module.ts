@@ -28,6 +28,7 @@ import { JwtStrategy } from './third-parties/strategy/jwt-strategy';
     ShopEquipmentModule,
     EquipmentTypeModule,
     AuthModule,
+    PassportModule
     ],
   controllers: [AppController],
   providers: [AppService],
