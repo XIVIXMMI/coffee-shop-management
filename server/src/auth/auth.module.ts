@@ -7,14 +7,15 @@ import { JwtStrategy } from 'src/third-parties/strategy/jwt-strategy';
 
 @Module({
   controllers: [AuthController],
-  imports: [UsersModule, 
+  imports: [
+    UsersModule, 
     JwtModule.register({
       global: true,
       secret: process.env.accessToken, 
       signOptions: { expiresIn: '1h' },
     }),
   ],
-  providers: [AuthService, JwtService, JwtModule],
+  providers: [AuthService,JwtStrategy],
 
 })
 export class AuthModule {}
