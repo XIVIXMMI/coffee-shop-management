@@ -13,4 +13,10 @@ export class CreateUserDto {
     @IsNotEmpty()
     @IsPhoneNumber('VN',{ message: 'Invalid phone number' })
     phone_number: string;
+
+    @IsNotEmpty()
+    staff_id: number;
+
+    @IsNotEmpty()
+    role_id: number;
 }

@@ -17,7 +17,7 @@ model User {
   user_id         Int      @id @default(autoincrement())
   username       String
   password       String
-  phone_number   String
+  phone_number   String   @unique
   staff          Staff    @relation(fields: [staff_id], references: [staff_id])
   role           Role     @relation(fields: [role_id], references: [role_id])
   staff_id        Int
