@@ -2,6 +2,8 @@ import { HttpException, HttpStatus, Injectable, Post, UnauthorizedException } fr
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ErrorCustom } from 'src/common/error.custom';
+import { ERROR_RESPONSE } from 'src/common/error.handle';
 
 @Injectable()
 export class UsersService {
@@ -9,6 +11,7 @@ export class UsersService {
 
   async createUser(createUserDto: CreateUserDto) {
     const { username, password, phone_number, staff_id, role_id  } = createUserDto;
+    await this.checkStaffId(staff_id);
     const newUser = await this.prisma.user.create({
       data: {
         username,
@@ -64,7 +67,7 @@ export class UsersService {
       }
     })
     if(user){
-      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+      throw new ErrorCustom(ERROR_RESPONSE.UserIsExisted);
     }
   }
 }

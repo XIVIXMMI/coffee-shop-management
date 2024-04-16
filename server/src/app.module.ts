@@ -12,6 +12,8 @@ import { CoffeeBrewingToolsModule } from './coffee-brewing-tools/coffee-brewing-
 import { ShopEquipmentModule } from './shop-equipment/shop-equipment.module';
 import { EquipmentTypeModule } from './equipment-type/equipment-type.module';
 import { AuthModule } from './auth/auth.module';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './third-parties/strategy/jwt-strategy';
 
 
 @Module({
@@ -25,7 +27,8 @@ import { AuthModule } from './auth/auth.module';
     CoffeeBrewingToolsModule,
     ShopEquipmentModule,
     EquipmentTypeModule,
-    AuthModule],
+    AuthModule,
+    ],
   controllers: [AppController],
   providers: [AppService],
 })
