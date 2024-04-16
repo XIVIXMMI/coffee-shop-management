@@ -7,8 +7,8 @@ import * as bcrypt from 'bcryptjs';
 @Injectable()
 export class AuthService {
     constructor(
-        private readonly jwtService: JwtService,
         private readonly usersService: UsersService,
+        private readonly jwtService: JwtService,
     ) { }
 
     async validateUser(phone_number: string, password: string): Promise<User | null> {
