@@ -8,12 +8,10 @@ export class StaffService {
   constructor(private prisma: PrismaService) {}
 
   async create(createStaffDto: CreateStaffDto) {
-    // chuyển đổi birthdat và start date từ String sang Date
     const { staff_name, gender, address, phone_number, email, position, salary} = createStaffDto;
     const birthday = new Date(createStaffDto.birthday);
     const start_date = new Date(createStaffDto.start_date);
 
-    // Validate data
     if(!(birthday instanceof Date) || isNaN(birthday.getTime())){
       throw new BadRequestException('birthday must be a valid Date')
     }

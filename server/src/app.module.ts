@@ -14,6 +14,7 @@ import { EquipmentTypeModule } from './equipment-type/equipment-type.module';
 import { AuthModule } from './auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './third-parties/strategy/jwt-strategy';
+import { BillModule } from './bill/bill.module';
 
 
 @Module({
@@ -28,7 +29,8 @@ import { JwtStrategy } from './third-parties/strategy/jwt-strategy';
     ShopEquipmentModule,
     EquipmentTypeModule,
     AuthModule,
-    PassportModule
+    PassportModule,
+    BillModule
     ],
   controllers: [AppController],
   providers: [AppService],
