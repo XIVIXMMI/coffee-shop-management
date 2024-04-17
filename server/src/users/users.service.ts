@@ -12,6 +12,7 @@ export class UsersService {
   async createUser(createUserDto: CreateUserDto) {
     const { username, password, phone_number, staff_id, role_id  } = createUserDto;
     await this.checkStaffId(staff_id);
+    await this.checkStaffExisted(staff_id);
     const newUser = await this.prisma.user.create({
       data: {
         username,
@@ -68,6 +69,18 @@ export class UsersService {
     })
     if(user){
       throw new ErrorCustom(ERROR_RESPONSE.UserIsExisted);
+    }
+  }
+
+
+  async checkStaffExisted (staff_id: number) {
+    const user = await this.prisma.staff.findUnique({
+      where: { 
+        staff_id
+      }
+    })
+    if(!user){
+      throw new ErrorCustom(ERROR_RESPONSE.UserNotExits);
     }
   }
 }

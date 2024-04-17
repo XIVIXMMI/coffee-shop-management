@@ -7,6 +7,7 @@ type TErrorCode = 'PermissionDenied'
     | 'PasswordNotExits'
     | 'ValidIsEmail'
     | 'UserIsExisted'
+    | 'DrinksIsNotExisted'
 
 
 
@@ -36,6 +37,10 @@ export const ERROR_RESPONSE: Record<TErrorCode, IErrorResponse> = {
     UserIsExisted: {
         statusCode: HttpStatus.BAD_REQUEST,
         message: 'User is existed'
+    },
+    DrinksIsNotExisted: {
+        statusCode: HttpStatus.BAD_GATEWAY,
+        message: 'Drinks is not existed'
     }
 }
 
@@ -70,3 +75,4 @@ export const SUCCESS_RESPONSE: Record<TSuccessCode, BaseResponse> = {
         message: 'Admin created successfully',
     }
 }
+
