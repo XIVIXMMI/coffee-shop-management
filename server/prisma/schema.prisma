@@ -55,6 +55,7 @@ model Storage {
   cost_price     Decimal
   quantity      Int
   goods_unit     String
+  created_by  DateTime
   user_id        Int
   user          User     @relation(fields: [user_id], references: [user_id])
 
@@ -139,6 +140,7 @@ model Bill {
   staff_id      Int
   bill_date     DateTime
   total_price   Decimal
+  created_by    DateTime
   staff        Staff     @relation(fields: [staff_id], references: [staff_id])
 
   billdetails BillDetails[]

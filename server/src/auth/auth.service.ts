@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { UsersService } from 'src/users/users.service';
-import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -11,22 +10,24 @@ export class AuthService {
         private readonly jwtService: JwtService,
     ) { }
 
-    async validateUser(phone_number: string, password: string): Promise<User | null> {
+    async validateUser(phone_number: string, password: string): Promise<any> {
         const user = await this.usersService.findByPhoneNumber(phone_number);
-        if (user) {
+        if (user && user.password == password) {
             return user;
         }
-        return user;
+        return null;
     }
 
-    async login(user: User): Promise< string> {
-        const payload = { phone_number: user.phone_number, sub: user.user_id };
-        const secret: string = process.env.refreshToken;
+    async login(user: User): Promise<string> {
+        const payload = {user_id: user.user_id, phone_number: user.phone_number, role_id: user.role_id };
+        const secret: string = process.env.accessToken;
         let expiresInRefreshToken = '1h'; 
     
-        return this.jwtService.signAsync(payload, {
+        const token = this.jwtService.signAsync(payload, {
             expiresIn: expiresInRefreshToken, 
             secret 
         });
+
+        return token;
     }
 }
