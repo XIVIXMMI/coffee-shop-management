@@ -1,11 +1,18 @@
-import { IsDateString, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsOptional, IsInt, IsString, IsDecimal, IsDate, IsNotEmpty, IsDateString, IsNumber, IsEnum } from 'class-validator';
+
+enum GoodsUnit {
+    KILOGRAM = 'kilogram',
+    GRAM = 'gram',
+    LITTER = 'litter',
+    UNIT = 'unit',
+    HOUSEWARE = 'houseware'
+}
 
 export class CreateStorageDto {
-
     @IsNotEmpty()
     @IsString()
     goods_name: string;
-    
+
     @IsNotEmpty()
     @IsDateString()
     arrival_date: Date;
@@ -15,11 +22,15 @@ export class CreateStorageDto {
     cost_price: number;
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsInt()
     quantity: number;
 
-    @IsNotEmpty()
-    @IsString()
-    goods_unit: string;
+    @IsEnum(GoodsUnit)
+    goods_unit: GoodsUnit;
+
+    // @IsNotEmpty()
+    // @IsInt()
+    // created_by: number;
 
 }
+

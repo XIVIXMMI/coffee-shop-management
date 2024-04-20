@@ -20,10 +20,13 @@ model User {
   phone_number   String   @unique
   staff          Staff    @relation(fields: [staff_id], references: [staff_id])
   role           Role     @relation(fields: [role_id], references: [role_id])
-  staff_id        Int
-  role_id         Int
 
-  storage       Storage[]
+  role_id   Int
+  staff_id  Int
+
+  storageCreatedBy       Storage[]   @relation("CreatedBy")
+  storagesDeletedBy Storage[] @relation("DeletedBy")
+  billsCreatedBy        Bill[]    @relation("CreatedBy")
 }
 
 model Staff {
@@ -37,7 +40,7 @@ model Staff {
   position     String
   salary       Float
   start_date   DateTime
-  users  User []
+  users  User []  
   bill Bill[]
   
 }
@@ -45,24 +48,26 @@ model Staff {
 model Role {
   role_id     Int      @id @default(autoincrement())
   role_name    String
-  users  User []
+  users  User []  
 }
 
 model Storage {
-  storage_id     Int      @id @default(autoincrement())
-  goods_name     String
-  arrival_date   DateTime
-  cost_price     Decimal
-  quantity      Int
-  goods_unit     String
-  created_by  DateTime
-  user_id        Int
-  user          User     @relation(fields: [user_id], references: [user_id])
+  storage_id          Int                 @id @default(autoincrement())
+  goods_name          String
+  arrival_date        DateTime
+  cost_price          Decimal
+  quantity            Int
+  goods_unit          String
+  created_by          Int                 @map("user_id")              
+  createdBy           User                @relation("CreatedBy", fields: [created_by], references: [user_id])
+  deleted_by          Int?                @map("user_id_deleted")   
+  deletedBy           User?               @relation("DeletedBy", fields: [deleted_by], references: [user_id])  
 
-  coffeebrewingtool CoffeeBrewingTool[]
-  shopequipment     ShopEquipment[]
-  ingredient Ingredient[]
+  coffeebrewingtool   CoffeeBrewingTool[]
+  shopequipment       ShopEquipment[]
+  ingredient          Ingredient[]
 }
+
 
 model CoffeeBrewingTool {
   brewingTool_id     Int       @id @default(autoincrement())
@@ -140,9 +145,10 @@ model Bill {
   staff_id      Int
   bill_date     DateTime
   total_price   Decimal
-  created_by    DateTime
-  staff        Staff     @relation(fields: [staff_id], references: [staff_id])
+  created_by    Int          @map("user_id")
+  createdBy     User         @relation("CreatedBy", fields: [created_by], references: [user_id])
 
+  staff        Staff     @relation(fields: [staff_id], references: [staff_id])
   billdetails BillDetails[]
 }
 

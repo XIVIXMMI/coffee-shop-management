@@ -1,15 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { StorageService } from './storage.service';
 import { CreateStorageDto } from './dto/create-storage.dto';
 import { UpdateStorageDto } from './dto/update-storage.dto';
+import { JwtAuthGuard } from 'src/third-parties/guard/jwt-guard';
 
 @Controller('storage')
 export class StorageController {
   constructor(private readonly storageService: StorageService) {}
 
   @Post()
-  create(@Body() createStorageDto: CreateStorageDto) {
-    return this.storageService.create(createStorageDto);
+  @UseGuards(JwtAuthGuard)
+  create(@Body() createStorageDto: CreateStorageDto, @Req() request) {
+    return this.storageService.create(createStorageDto,request.user.user_id);
   }
 
   @Get()

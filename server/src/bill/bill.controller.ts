@@ -10,9 +10,9 @@ export class BillController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  create(@Req() request) {
-    console.log(request.user)
-    //return this.billService.create(createBillDto);
+  create(@Body() createBillDto: CreateBillDto,@Req() request) {
+    //console.log(createBillDto)
+    return this.billService.create(createBillDto,request.user.user_id);
   }
 
   @Get()

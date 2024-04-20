@@ -24,3 +24,4 @@ export class UpdateBillDto extends PartialType(CreateBillDto) {
     @IsNotEmpty()
     bill_details: BillDetails[];
 }
+

@@ -7,8 +7,9 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class StorageService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createStorageDto: CreateStorageDto) {
-    const {goods_name,arrival_date,cost_price,quantity,goods_unit} = createStorageDto;
+  async create(createStorageDto: CreateStorageDto, createdBy: number) {
+    const { goods_name, arrival_date, cost_price, quantity, goods_unit } = createStorageDto;
+    
     const newGoods = await this.prisma.storage.create({
       data: {
         goods_name,
@@ -16,11 +17,13 @@ export class StorageService {
         cost_price,
         quantity,
         goods_unit,
-        user_id: 3
+        created_by: createdBy,
       },
     });
+    
     return newGoods;
   }
+  
 
   findAll() {
     return this.prisma.storage.findMany();
