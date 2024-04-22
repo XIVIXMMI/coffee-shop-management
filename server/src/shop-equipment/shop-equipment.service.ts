@@ -13,7 +13,6 @@ export class ShopEquipmentService {
       data: {
         storage_id: 14,
         equipment_name,
-        equipmenttype_id: 1
       }
     })
     return newEquipment;

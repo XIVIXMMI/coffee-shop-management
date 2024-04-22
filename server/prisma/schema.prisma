@@ -20,10 +20,13 @@ model User {
   phone_number   String   @unique
   staff          Staff    @relation(fields: [staff_id], references: [staff_id])
   role           Role     @relation(fields: [role_id], references: [role_id])
-  staff_id        Int
-  role_id         Int
 
-  storage       Storage[]
+  role_id   Int
+  staff_id  Int
+
+  storageCreatedBy       Storage[]   @relation("CreatedBy")
+  storagesDeletedBy Storage[] @relation("DeletedBy")
+  billsCreatedBy        Bill[]    @relation("CreatedBy")
 }
 
 model Staff {
@@ -37,32 +40,36 @@ model Staff {
   position     String
   salary       Float
   start_date   DateTime
-  users  User []
-  bill Bill[]
+  users  User []  
   
 }
 
 model Role {
   role_id     Int      @id @default(autoincrement())
   role_name    String
-  users  User []
+  users  User []  
 }
 
 model Storage {
-  storage_id     Int      @id @default(autoincrement())
-  goods_name     String
-  arrival_date   DateTime
-  cost_price     Decimal
-  quantity      Int
-  goods_unit     String
-  created_by  DateTime
-  user_id        Int
-  user          User     @relation(fields: [user_id], references: [user_id])
+  storage_id          Int                 @id @default(autoincrement())
+  goods_name          String
+  arrival_date        DateTime
+  cost_price          Decimal
+  quantity            Int
+  goods_unit          String
+  created_by          Int                 @map("user_id")              
+  createdBy           User                @relation("CreatedBy", fields: [created_by], references: [user_id])
+  deleted_by          Int?                @map("user_id_deleted")   
+  deletedBy           User?               @relation("DeletedBy", fields: [deleted_by], references: [user_id])  
+  deleted             Boolean           @default(false)
+  equipmenttype_id   Int
+  equipmentType     EquipmentType @relation(fields: [equipmenttype_id], references: [equipmenttype_id])
 
-  coffeebrewingtool CoffeeBrewingTool[]
-  shopequipment     ShopEquipment[]
-  ingredient Ingredient[]
+  coffeebrewingtool   CoffeeBrewingTool[]
+  shopequipment       ShopEquipment[]
+  ingredient          Ingredient[]
 }
+
 
 model CoffeeBrewingTool {
   brewingTool_id     Int       @id @default(autoincrement())
@@ -76,18 +83,17 @@ model CoffeeBrewingTool {
 model ShopEquipment {
   equipment_id       Int           @id @default(autoincrement())
   storage_id         Int
-  equipmenttype_id   Int
   equipment_name     String
 
   storage           Storage       @relation(fields: [storage_id], references: [storage_id])
-  equipmentType     EquipmentType @relation(fields: [equipmenttype_id], references: [equipmenttype_id])
+  
 }
 
 model EquipmentType {
   equipmenttype_id   Int       @id @default(autoincrement())
   equipmenttype_name String
 
-  shopequipment ShopEquipment[]
+  storage  Storage[]  
 }
 
 model Ingredient {
@@ -131,17 +137,17 @@ model MenuDetails {
 model Menu {
   menu_id      Int      @id @default(autoincrement())
   menu_name    String
+  image_url   String
 
   menudetails MenuDetails[]
 }
 
 model Bill {
   bill_id       Int       @id @default(autoincrement())
-  staff_id      Int
   bill_date     DateTime
   total_price   Decimal
-  created_by    DateTime
-  staff        Staff     @relation(fields: [staff_id], references: [staff_id])
+  created_by    Int          @map("user_id")
+  createdBy     User         @relation("CreatedBy", fields: [created_by], references: [user_id])
 
   billdetails BillDetails[]
 }

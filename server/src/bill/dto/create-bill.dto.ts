@@ -1,16 +1,14 @@
-import { IsArray, IsDateString, IsNotEmpty,IsNumber, IsString, } from "class-validator";
+import { IsArray, IsDateString, IsInt, IsNotEmpty,IsNumber, IsString, } from "class-validator";
 
 export class CreateBillDto {
-
-    @IsNotEmpty()   
-    @IsDateString()
-    bill_date: Date;
-
-    total_price: number;
 
     @IsArray()
     @IsNotEmpty()
     bill_details: BillDetails[];
+
+    // @IsNotEmpty()
+    // @IsInt()
+    // created_by: number;
 }
 
 export class BillDetails {
@@ -27,7 +25,7 @@ export class BillDetails {
     @IsNumber()
     quantity: number;
 
-    @IsNotEmpty()
-    @IsNumber()
-    price: number;
+    // @IsNotEmpty()
+    // @IsNumber()
+    // price: number;
 }
