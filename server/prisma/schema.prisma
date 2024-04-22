@@ -41,7 +41,6 @@ model Staff {
   salary       Float
   start_date   DateTime
   users  User []  
-  bill Bill[]
   
 }
 
@@ -62,6 +61,9 @@ model Storage {
   createdBy           User                @relation("CreatedBy", fields: [created_by], references: [user_id])
   deleted_by          Int?                @map("user_id_deleted")   
   deletedBy           User?               @relation("DeletedBy", fields: [deleted_by], references: [user_id])  
+  deleted             Boolean           @default(false)
+  equipmenttype_id   Int
+  equipmentType     EquipmentType @relation(fields: [equipmenttype_id], references: [equipmenttype_id])
 
   coffeebrewingtool   CoffeeBrewingTool[]
   shopequipment       ShopEquipment[]
@@ -81,18 +83,17 @@ model CoffeeBrewingTool {
 model ShopEquipment {
   equipment_id       Int           @id @default(autoincrement())
   storage_id         Int
-  equipmenttype_id   Int
   equipment_name     String
 
   storage           Storage       @relation(fields: [storage_id], references: [storage_id])
-  equipmentType     EquipmentType @relation(fields: [equipmenttype_id], references: [equipmenttype_id])
+  
 }
 
 model EquipmentType {
   equipmenttype_id   Int       @id @default(autoincrement())
   equipmenttype_name String
 
-  shopequipment ShopEquipment[]
+  storage  Storage[]  
 }
 
 model Ingredient {
@@ -136,19 +137,18 @@ model MenuDetails {
 model Menu {
   menu_id      Int      @id @default(autoincrement())
   menu_name    String
+  image_url   String
 
   menudetails MenuDetails[]
 }
 
 model Bill {
   bill_id       Int       @id @default(autoincrement())
-  staff_id      Int
   bill_date     DateTime
   total_price   Decimal
   created_by    Int          @map("user_id")
   createdBy     User         @relation("CreatedBy", fields: [created_by], references: [user_id])
 
-  staff        Staff     @relation(fields: [staff_id], references: [staff_id])
   billdetails BillDetails[]
 }
 

@@ -18,7 +18,6 @@ export class BillService {
         bill_date: billDate,
         total_price: totalPrice,
         created_by: createdBy,
-        staff_id: createdBy,
       }
     })
 
@@ -29,22 +28,21 @@ export class BillService {
       let numberValue: number = Number(getDrinkPrice);
       totalPrice += detail.quantity * numberValue;
 
-      //console.log(detail.drink_name)
+
       if (!getIdByName) {
-        throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted, `${10}`);
+        throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
       }
 
         await this.prisma.billDetails.create({
           data: {
             drink_id: getIdDrink,
-            bill_id: detail.bill_id,
+            bill_id: newBill.bill_id,
             quantity: detail.quantity,
             price: getDrinkPrice
           }
         });
-      //console.log(detail.bill_id)
     }
-    await this.prisma.bill.update({
+    const bill = await this.prisma.bill.update({
       where: {
         bill_id: newBill.bill_id,
       },
@@ -52,7 +50,7 @@ export class BillService {
         total_price: totalPrice,
       },
     });
-    return newBill;
+    return bill;
   }
 
   findAll() {

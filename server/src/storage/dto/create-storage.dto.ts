@@ -28,6 +28,11 @@ export class CreateStorageDto {
     @IsEnum(GoodsUnit)
     goods_unit: GoodsUnit;
 
+    @IsNotEmpty()
+    @IsInt()
+    equipment_type: number;
+
+
     // @IsNotEmpty()
     // @IsInt()
     // created_by: number;

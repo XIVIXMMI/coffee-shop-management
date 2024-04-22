@@ -29,6 +29,12 @@ export class StorageController {
     return this.storageService.update(+id, updateStorageDto);
   }
 
+  @Patch('softDelete/:id')
+  softDelete(@Param('id') id: string) {
+    return this.storageService.softDelete(+id);
+  }
+
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.storageService.remove(+id);
