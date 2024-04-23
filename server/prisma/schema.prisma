@@ -54,8 +54,8 @@ model Storage {
   storage_id          Int                 @id @default(autoincrement())
   goods_name          String
   arrival_date        DateTime
-  cost_price          Decimal
-  quantity            Int
+  cost_price          Float
+  quantity            Float
   goods_unit          String
   created_by          Int                 @map("user_id")              
   createdBy           User                @relation("CreatedBy", fields: [created_by], references: [user_id])
@@ -107,7 +107,8 @@ model Ingredient {
 
 model DrinksDetails {
   drink_id          Int        
-  ingredient_id     Int        
+  ingredient_id     Int      
+  ingredient_weight Float 
 
   drink         Drink    @relation(fields: [drink_id], references: [drink_id])
   ingredient       Ingredient @relation(fields: [ingredient_id], references: [ingredient_id])
@@ -118,7 +119,7 @@ model DrinksDetails {
 model Drink {
   drink_id         Int        @id @default(autoincrement())
   drink_name       String
-  price           Decimal
+  price           Float
 
   drinkdetails DrinksDetails[]
   menudetails MenuDetails[]
@@ -128,6 +129,8 @@ model Drink {
 model MenuDetails {
   menu_id        Int      
   drink_id        Int   
+  price       Float
+  image_url   String
 
   menu          Menu     @relation(fields: [menu_id], references: [menu_id])
   drink         Drink    @relation(fields: [drink_id], references: [drink_id])
@@ -137,7 +140,6 @@ model MenuDetails {
 model Menu {
   menu_id      Int      @id @default(autoincrement())
   menu_name    String
-  image_url   String
 
   menudetails MenuDetails[]
 }
@@ -145,7 +147,7 @@ model Menu {
 model Bill {
   bill_id       Int       @id @default(autoincrement())
   bill_date     DateTime
-  total_price   Decimal
+  total_price   Float
   created_by    Int          @map("user_id")
   createdBy     User         @relation("CreatedBy", fields: [created_by], references: [user_id])
 
@@ -155,7 +157,7 @@ model Bill {
 model BillDetails {
   bill_id           Int
   drink_id          Int
-  price            Decimal
+  price            Float
   quantity         Int
   bill             Bill     @relation(fields: [bill_id], references: [bill_id])
   drink            Drink    @relation(fields: [drink_id], references: [drink_id])
