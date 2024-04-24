@@ -44,16 +44,16 @@ async function main() {
                 {
                     username: 'john_doe',
                     password: 'Aa@$dmin123',
-                    phone_number: '+841234567890',
-                    role_id: 2,
-                    staff_id: 2,
+                    phone_number: '+840934567890',
+                    role_id: 1,
+                    staff_id: 1,
                 },
                 {
                     username: 'jane_smith',
                     password: 'Aa@$dmin123',
                     phone_number: '+849876543210',
-                    role_id: 3,
-                    staff_id: 3,
+                    role_id: 1,
+                    staff_id: 1,
                 },
 
             ],
@@ -144,35 +144,35 @@ async function main() {
             ],
         });
 
-        await prisma.$transaction([
-            prisma.bill.create({
-                data: {
-                    bill_date: new Date(),
-                    total_price: 190000,
-                    created_by: 3, 
-                    billdetails: {
-                        create: [
-                            { drink_id: 1, price: 35000, quantity: 2 },
-                            { drink_id: 2, price: 40000, quantity: 3 }, 
-                        ]     
-                    },
-                },
-            }),
-            prisma.bill.create({
-                data: {
-                    bill_date: new Date(),
-                    total_price: 80000,
-                    created_by: 3, 
-                    billdetails: {
-                        create: [
-                            { drink_id: 3, price: 25000, quantity: 2 }, 
-                            { drink_id: 4, price: 30000, quantity: 1 }, 
-                        ],
-                    },
-                },
-            }),
+        // await prisma.$transaction([
+        //     prisma.bill.create({
+        //         data: {
+        //             bill_date: new Date(),
+        //             total_price: 190000,
+        //             created_by: 3, 
+        //             billdetails: {
+        //                 create: [
+        //                     { drink_id: 1, price: 35000, quantity: 2 },
+        //                     { drink_id: 2, price: 40000, quantity: 3 }, 
+        //                 ]     
+        //             },
+        //         },
+        //     }),
+        //     prisma.bill.create({
+        //         data: {
+        //             bill_date: new Date(),
+        //             total_price: 80000,
+        //             created_by: 3, 
+        //             billdetails: {
+        //                 create: [
+        //                     { drink_id: 3, price: 25000, quantity: 2 }, 
+        //                     { drink_id: 4, price: 30000, quantity: 1 }, 
+        //                 ],
+        //             },
+        //         },
+        //     }),
             
-        ]);
+        // ]);
         console.log('Seed data created successfully');
     } catch (error) {
         console.error('Error creating seed data:', error);

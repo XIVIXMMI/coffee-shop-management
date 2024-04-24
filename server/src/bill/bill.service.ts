@@ -11,90 +11,95 @@ export class BillService {
 
   // TODO: Xử lý ngoại lệ khi nhập 2 item, 1 item đã có trong db và 1 item chưa có trong db
   async create(createBillDto: CreateBillDto, createdBy: number) {
-
-    // const billDate = new Date();
-    // let totalPrice = 0;
-    // const newBill = await this.prisma.bill.create({
-    //   data: {
-    //     bill_date: billDate,
-    //     total_price: totalPrice,
-    //     created_by: createdBy,
-    //   }
-    // })
+    const billDate = new Date();
+    let totalPrice = 0;
+    const newBill = await this.prisma.bill.create({
+      data: {
+        bill_date: billDate,
+        total_price: totalPrice,
+        created_by: createdBy,
+      }
+    })
 
     for (let detail of createBillDto.bill_details) {
+      const getIdByName = await this.findDrinkByName(detail.drink_name);
+      if (!getIdByName) {
+        throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
+      }
 
-      const getIdByName = await this.findDrinkByName(detail.drink_name)
-    //   const getIdDrink = getIdByName.drink_id;
-    //   const getDrinkPrice = getIdByName.price
-    //   let numberValue: number = Number(getDrinkPrice);
-    //   totalPrice += detail.quantity * numberValue;
+      const getIdDrink = getIdByName.drink_id;
+      const getDrinkPrice = getIdByName.price;
 
-    const getName = await this.prisma.drinksDetails.findMany({
-      where: {
-        drink_id: getIdByName.drink_id,
-      },
-      select: {
-        ingredient_weight: true, // Select the ingredient_weight field
-        ingredient: { // Include the 'ingredient' relation
-          select: {
-            ingredient_name: true, // Select the name field of the 'ingredient' relation
+      let numberValue: number = Number(getDrinkPrice);
+      totalPrice += detail.quantity * numberValue;
+
+      const getName = await this.prisma.drinksDetails.findMany({
+        where: {
+          drink_id: getIdByName.drink_id,
+        },
+        select: {
+          ingredient_weight: true,
+          ingredient: {
+            select: {
+              ingredient_name: true,
+            },
           },
         },
-      },
-    });
-    const ingredientWeights = getName.map(item => item.ingredient_weight * detail.quantity);
+      });
 
-    const b = getName.map(item => item.ingredient.ingredient_name)
+      const ingredientWeights = getName.map(item => item.ingredient_weight * detail.quantity);
+      const getIngredientName = getName.map(item => item.ingredient.ingredient_name)
 
-    const currentStorages = await this.prisma.storage.findMany({
-      where: {
-        goods_name: { in: b }
-      }
-    });
-    
-    const updatePromises = currentStorages.map(async storage => {
-      const currentQuantity = storage.quantity; // Lấy ra quantity hiện tại
-      const index = currentStorages.findIndex(item => item.goods_name === storage.goods_name);
-      const updatedQuantity = currentQuantity - ingredientWeights[index]; // Cập nhật quantity mới
-      return this.prisma.storage.update({
+      const currentStorages = await this.prisma.storage.findMany({
         where: {
-          storage_id: storage.storage_id 
+          goods_name: { in: getIngredientName }
         },
-        data: {
-          quantity: updatedQuantity
+        select: {
+          storage_id: true,
+          goods_name: true,
+          quantity: true,
+          goods_unit: true,
+          equipmenttype_id: true
         }
       });
-    });
-    
-    await Promise.all(updatePromises); // Chờ cho tất cả các promise cập nhật hoàn thành
-    
 
-    //console.log(b)
+      const countQuantity = currentStorages.filter(storage => storage.quantity > 0).length;
+      if (countQuantity < getIngredientName.length) {
+        throw new Error("Not enough quantity");
+      }
 
-    //   if (!getIdByName) {
-    //     throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
-    //   }
-
-    //     await this.prisma.billDetails.create({
-    //       data: {
-    //         drink_id: getIdDrink,
-    //         bill_id: newBill.bill_id,
-    //         quantity: detail.quantity,
-    //         price: getDrinkPrice
-    //       }
-    //     });
+      const updatePromises = currentStorages.map(async storage => {
+        const currentQuantity = storage.quantity; // Lấy ra quantity hiện tại
+        const index = currentStorages.findIndex(item => item.goods_name === storage.goods_name);
+        const updatedQuantity = currentQuantity - ingredientWeights[index]; // Cập nhật quantity mới
+        return this.prisma.storage.update({
+          where: {
+            storage_id: storage.storage_id
+          },
+          data: {
+            quantity: updatedQuantity
+          }
+        });
+      });
+      await this.prisma.billDetails.create({
+        data: {
+          drink_id: getIdDrink,
+          bill_id: newBill.bill_id,
+          quantity: detail.quantity,
+          price: getDrinkPrice
+        }
+      });
+      await Promise.all(updatePromises);
     }
-    
-    // const bill = await this.prisma.bill.update({
-    //   where: {
-    //     bill_id: newBill.bill_id,
-    //   },
-    //   data: {
-    //     total_price: totalPrice,
-    //   },
-    // });
-    //return bill;
+    const bill = await this.prisma.bill.update({
+      where: {
+        bill_id: newBill.bill_id,
+      },
+      data: {
+        total_price: totalPrice,
+      },
+    });
+    return bill;
   }
 
   findAll() {

@@ -48,9 +48,9 @@ export class DrinksService {
         drink_name: updateDrinkDto.drink_name,
         price: updateDrinkDto.price
       }
-        
     });
     for (let drinkDetails of updateDrinkDto.drink_details) {
+      // Chỉ nhập gram ko nhập kg
       const ingredientWeightInKg = drinkDetails.ingredient_weight / 1000;
       await this.prisma.drinksDetails.update({
         where: { drink_id_ingredient_id: { drink_id: id, ingredient_id: drinkDetails.ingredient_id } },
