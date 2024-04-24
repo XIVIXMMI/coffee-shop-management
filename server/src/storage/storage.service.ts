@@ -10,43 +10,63 @@ export class StorageService {
   async create(createStorageDto: CreateStorageDto, createdBy: number) {
     const { goods_name, arrival_date, cost_price, quantity, goods_unit, equipment_type } = createStorageDto;
 
-    const newGoods = await this.prisma.storage.create({
-      data: {
-        goods_name,
-        arrival_date,
-        cost_price,
-        quantity,
-        goods_unit,
-        equipmenttype_id: equipment_type,
-        created_by: createdBy,
-        deleted: false
-      },
+    let newGoods; // Chuyển từ var sang let để đảm bảo scope hợp lệ
+    const existingItem = await this.prisma.storage.findFirst({
+      where: {
+        goods_name: createStorageDto.goods_name
+      }
     });
 
-    if(equipment_type === 1){
-      await this.prisma.ingredient.create({
+    if (existingItem) {
+      await this.prisma.storage.update({
+        where: {
+          storage_id: existingItem.storage_id
+        },
         data: {
-          storage_id: newGoods.storage_id,
-          ingredient_name: goods_name
+          quantity: existingItem.quantity + createStorageDto.quantity,
+          arrival_date: new Date(), // Cập nhật ngày thêm mới
         }
       });
-    }else if (equipment_type === 2 ) {
-      await this.prisma.coffeeBrewingTool.create({
+    } else {
+      // Nếu không tìm thấy mục, tạo một mục mới
+      newGoods = await this.prisma.storage.create({
         data: {
-          storage_id: newGoods.storage_id,
-          brewingtool_name: goods_name
-        }
-      });
-    }if (equipment_type === 3 ) {
-      await this.prisma.shopEquipment.create({
-        data: {
-          storage_id: newGoods.storage_id,
-          equipment_name: goods_name
+          ...createStorageDto,
+          equipmenttype_id: createStorageDto.equipment_type,
+          created_by: createdBy,
+          deleted: false
         }
       });
     }
+
+    // Kiểm tra nếu newGoods được gán giá trị trước khi truy cập vào thuộc tính storage_id
+    if (newGoods) {
+      if (equipment_type === 1) {
+        await this.prisma.ingredient.create({
+          data: {
+            storage_id: newGoods.storage_id,
+            ingredient_name: goods_name
+          }
+        });
+      } else if (equipment_type === 2) {
+        await this.prisma.coffeeBrewingTool.create({
+          data: {
+            storage_id: newGoods.storage_id,
+            brewingtool_name: goods_name
+          }
+        });
+      } else if (equipment_type === 3) {
+        await this.prisma.shopEquipment.create({
+          data: {
+            storage_id: newGoods.storage_id,
+            equipment_name: goods_name
+          }
+        });
+      }
+    }
     return newGoods;
   }
+
 
   findAll() {
     return this.prisma.storage.findMany({
@@ -75,8 +95,8 @@ export class StorageService {
 
   softDelete(id: number) {
     return this.prisma.storage.update({
-      where: { storage_id: id},
-      data: {deleted: true}
+      where: { storage_id: id },
+      data: { deleted: true }
     })
   }
 

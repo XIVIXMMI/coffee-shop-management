@@ -22,25 +22,74 @@ export class BillService {
     })
 
     for (let detail of createBillDto.bill_details) {
-      const getIdByName = await this.findDrinkByName(detail.drink_name)
-      const getIdDrink = getIdByName.drink_id;
-      const getDrinkPrice = getIdByName.price
-      let numberValue: number = Number(getDrinkPrice);
-      totalPrice += detail.quantity * numberValue;
-
-
+      const getIdByName = await this.findDrinkByName(detail.drink_name);
       if (!getIdByName) {
         throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
       }
 
-        await this.prisma.billDetails.create({
+      const getIdDrink = getIdByName.drink_id;
+      const getDrinkPrice = getIdByName.price;
+
+      let numberValue: number = Number(getDrinkPrice);
+      totalPrice += detail.quantity * numberValue;
+
+      const getName = await this.prisma.drinksDetails.findMany({
+        where: {
+          drink_id: getIdByName.drink_id,
+        },
+        select: {
+          ingredient_weight: true,
+          ingredient: {
+            select: {
+              ingredient_name: true,
+            },
+          },
+        },
+      });
+
+      const ingredientWeights = getName.map(item => item.ingredient_weight * detail.quantity);
+      const getIngredientName = getName.map(item => item.ingredient.ingredient_name)
+
+      const currentStorages = await this.prisma.storage.findMany({
+        where: {
+          goods_name: { in: getIngredientName }
+        },
+        select: {
+          storage_id: true,
+          goods_name: true,
+          quantity: true,
+          goods_unit: true,
+          equipmenttype_id: true
+        }
+      });
+
+      const countQuantity = currentStorages.filter(storage => storage.quantity > 0).length;
+      if (countQuantity < getIngredientName.length) {
+        throw new Error("Not enough quantity");
+      }
+
+      const updatePromises = currentStorages.map(async storage => {
+        const currentQuantity = storage.quantity; // Lấy ra quantity hiện tại
+        const index = currentStorages.findIndex(item => item.goods_name === storage.goods_name);
+        const updatedQuantity = currentQuantity - ingredientWeights[index]; // Cập nhật quantity mới
+        return this.prisma.storage.update({
+          where: {
+            storage_id: storage.storage_id
+          },
           data: {
-            drink_id: getIdDrink,
-            bill_id: newBill.bill_id,
-            quantity: detail.quantity,
-            price: getDrinkPrice
+            quantity: updatedQuantity
           }
         });
+      });
+      await this.prisma.billDetails.create({
+        data: {
+          drink_id: getIdDrink,
+          bill_id: newBill.bill_id,
+          quantity: detail.quantity,
+          price: getDrinkPrice
+        }
+      });
+      await Promise.all(updatePromises);
     }
     const bill = await this.prisma.bill.update({
       where: {
@@ -101,6 +150,6 @@ export class BillService {
         drink_id
       }
     })
-
   }
+
 }

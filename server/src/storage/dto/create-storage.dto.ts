@@ -32,10 +32,5 @@ export class CreateStorageDto {
     @IsInt()
     equipment_type: number;
 
-
-    // @IsNotEmpty()
-    // @IsInt()
-    // created_by: number;
-
 }
 
