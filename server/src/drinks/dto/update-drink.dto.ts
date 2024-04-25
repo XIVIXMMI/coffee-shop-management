@@ -9,6 +9,8 @@ export class UpdateDrinkDto {
     @IsNumber()
     price: number;
 
+    image_url: string
+
     @IsArray()
     @IsNotEmpty()
     drink_details: DrinkDetails[];
@@ -16,10 +18,10 @@ export class UpdateDrinkDto {
 
 export class DrinkDetails {
 
-    @IsNotEmpty()
+
     @IsNumber()
     ingredient_id: number
 
-    @IsNotEmpty()
+
     ingredient_weight: number
 }

@@ -2,30 +2,40 @@ import { Injectable } from '@nestjs/common';
 import { CreateDrinkDto } from './dto/create-drink.dto';
 import { UpdateDrinkDto } from './dto/update-drink.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class DrinksService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService,
+              private cloudinaryService: CloudinaryService,
+  ) { }
 
-  async create(createDrinkDto: CreateDrinkDto) {
+  async create(createDrinkDto: CreateDrinkDto, image: Express.Multer.File) {
     const { drink_name, price } = createDrinkDto;
+
+    const imageUploadResult = await this.cloudinaryService.uploadFile(image);
+    const imageUrl = imageUploadResult.secure_url;
+
     const newDrinks = await this.prisma.drink.create({
       data: {
         drink_name,
-        price
-      }
-    })
+        price: +price,
+        image_url: imageUrl
+      },
+    });
+
     for (let drinkDetails of createDrinkDto.drink_details) {
       const ingredientWeightInKg = drinkDetails.ingredient_weight / 1000;
-      await this.prisma.drinksDetails.create({
+        await this.prisma.drinksDetails.create({
         data: {
           drink_id: newDrinks.drink_id,
-          ingredient_id: drinkDetails.ingredient_id,
-          ingredient_weight: ingredientWeightInKg
+          ingredient_id: +drinkDetails.ingredient_id,
+          ingredient_weight: +ingredientWeightInKg
         }
-      })
+      });
     }
-    return newDrinks;
+    
+    //return newDrinks;
   }
 
   findAll() {

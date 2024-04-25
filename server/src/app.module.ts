@@ -16,6 +16,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './third-parties/strategy/jwt-strategy';
 import { BillModule } from './bill/bill.module';
 import { MenuModule } from './menu/menu.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 
 @Module({
@@ -32,7 +33,8 @@ import { MenuModule } from './menu/menu.module';
     AuthModule,
     PassportModule,
     BillModule,
-    MenuModule
+    MenuModule,
+    CloudinaryModule
     ],
   controllers: [AppController],
   providers: [AppService],
