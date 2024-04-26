@@ -14,8 +14,16 @@ export class CloudinaryService {
                     resolve(result);
                 },
             );
-
             streamifier.createReadStream(file.buffer).pipe(uploadStream);
         });
+    }
+    async deleteImage(publicId: string): Promise<void> {
+        try {
+            await cloudinary.uploader.destroy(publicId);
+            console.log(`Image with publicId ${publicId} deleted successfully.`);
+        } catch (error) {
+            console.error(`Error deleting image with publicId ${publicId}:`, error);
+            throw new Error(`Error deleting image with publicId ${publicId}: ${error.message}`);
+        }
     }
 }

@@ -1,4 +1,5 @@
-import { IsArray, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsArray, IsIn, IsInt, IsNotEmpty, IsString } from "class-validator";
+
 
 
 export class UpdateDrinkDto {
@@ -6,7 +7,7 @@ export class UpdateDrinkDto {
     @IsString()
     drink_name: string;
 
-    @IsNumber()
+    @IsInt()
     price: number;
 
     image_url: string
@@ -19,9 +20,9 @@ export class UpdateDrinkDto {
 export class DrinkDetails {
 
 
-    @IsNumber()
+    @IsInt()
     ingredient_id: number
 
-
+    @IsInt()
     ingredient_weight: number
 }

@@ -11,18 +11,15 @@ export class CreateDrinkDto {
 
     image_url: string;
 
-    @IsArray()
-    @IsNotEmpty()
     drink_details: DrinkDetails[];
 }
 
 export class DrinkDetails {
 
     @IsNotEmpty()
-    @IsNumber()
-    ingredient_id: number
+    ingredient_id:number;
 
     @IsNotEmpty()
     @IsNumber()
-    ingredient_weight: number
+    ingredient_weight: number;
 }
