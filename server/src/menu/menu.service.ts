@@ -1,11 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Drink } from 'src/drinks/entities/drink.entity';
 
 @Injectable()
 export class MenuService {
-  create(createMenuDto: CreateMenuDto) {
-    return 'This action adds a new menu';
+  constructor (private prisma: PrismaService) {}
+
+  async create(createMenuDto: CreateMenuDto) {
+    const {menu_name } = createMenuDto;
+    const menu = await this.prisma.menu.create({
+      data: {
+        menu_name
+      }
+    });
+    for (let menuDetails of createMenuDto.menu_details) {
+      await this.prisma.menuDetails.create({
+        data: {
+          menu_id: menu.menu_id,
+          drink_id: menuDetails.drink_id,
+
+        }
+      })
+    }
+    return menu;
   }
 
   findAll() {

@@ -120,6 +120,7 @@ model Drink {
   drink_id         Int        @id @default(autoincrement())
   drink_name       String
   price           Float
+  image_url       String
 
   drinkdetails DrinksDetails[]
   menudetails MenuDetails[]
@@ -129,8 +130,6 @@ model Drink {
 model MenuDetails {
   menu_id        Int      
   drink_id        Int   
-  price       Float
-  image_url   String
 
   menu          Menu     @relation(fields: [menu_id], references: [menu_id])
   drink         Drink    @relation(fields: [drink_id], references: [drink_id])

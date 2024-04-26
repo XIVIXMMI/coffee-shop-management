@@ -64,82 +64,104 @@ async function main() {
                 {
                     drink_name: 'Coffee',
                     price: 35000,
+                    image_url: ' ',
                 },
                 {
                     drink_name: 'Tea',
                     price: 20000,
+                    image_url: ' ',
                 },
                 {
                     drink_name: 'Juice',
                     price: 40000,
+                    image_url: ' ',
                 },
                 {
                     drink_name: 'Soda',
                     price: 25000,
+                    image_url: ' ',
                 },
                 {
                     drink_name: 'Smoothie',
                     price: 50000,
+                    image_url: ' ',
                 },
                 {
                     drink_name: 'Espresso',
                     price: 40000,
+                    image_url: ' ',
                 },
                 {
                     drink_name: 'Latte',
                     price: 45000,
+                    image_url: ' ',
                 },
                 {
                     drink_name: 'Cappuccino',
                     price: 45000,
+                    image_url: ' ',
                 },
                 {
                     drink_name: 'Mocha',
                     price: 50000,
+                    image_url: ' ',
                 },
                 {
                     drink_name: 'Iced Coffee',
                     price: 40000,
+                    image_url: ' ',
                 },
                 {
                     drink_name: 'Iced Tea',
                     price: 30000,
+                    image_url: ' ',
                 },
                 {
                     drink_name: 'Lemonade',
                     price: 35000,
+                    image_url: ' ',
                 },
                 {
                     drink_name: 'Milkshake',
                     price: 60000,
+                    image_url: ' ',
                 },
                 {
                     drink_name: 'Hot Chocolate',
                     price: 40000,
+                    image_url: ' ',
                 },
                 {
                     drink_name: 'Fruit Punch',
                     price: 35000,
+                    image_url: ' ',
                 },
                 {
                     drink_name: 'Mocktail',
                     price: 55000,
+                    image_url: ' ',
+
                 },
                 {
                     drink_name: 'Energy Drink',
                     price: 30000,
+                    image_url: ' ',
+
                 },
                 {
                     drink_name: 'Coconut Water',
                     price: 30000,
+                    image_url: ' ',
                 },
                 {
                     drink_name: 'Sparkling Water',
                     price: 25000,
+                    image_url: ' ',
                 },
                 {
                     drink_name: 'Green Tea',
                     price: 30000,
+                    image_url: ' ',
                 },
             ],
         });
