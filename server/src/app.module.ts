@@ -1,22 +1,21 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './components/users/users.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { RoleModule } from './role/role.module';
-import { StaffModule } from './staff/staff.module';
-import { StorageModule } from './storage/storage.module';
-import { IngredientModule } from './ingredient/ingredient.module';
-import { DrinksModule } from './drinks/drinks.module';
-import { CoffeeBrewingToolsModule } from './coffee-brewing-tools/coffee-brewing-tools.module';
-import { ShopEquipmentModule } from './shop-equipment/shop-equipment.module';
-import { EquipmentTypeModule } from './equipment-type/equipment-type.module';
-import { AuthModule } from './auth/auth.module';
+import { RoleModule } from './components/role/role.module';
+import { StaffModule } from './components/staff/staff.module';
+import { StorageModule } from './components/storage/storage.module';
+import { IngredientModule } from './components/ingredient/ingredient.module';
+import { DrinksModule } from './components/drinks/drinks.module';
+import { CoffeeBrewingToolsModule } from './components/coffee-brewing-tools/coffee-brewing-tools.module';
+import { ShopEquipmentModule } from './components/shop-equipment/shop-equipment.module';
+import { EquipmentTypeModule } from './components/equipment-type/equipment-type.module';
+import { AuthModule } from './components/auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from './third-parties/strategy/jwt-strategy';
-import { BillModule } from './bill/bill.module';
-import { MenuModule } from './menu/menu.module';
-import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { BillModule } from './components/bill/bill.module';
+import { MenuModule } from './components/menu/menu.module';
+import { CloudinaryModule } from './components/cloudinary/cloudinary.module';
 
 
 @Module({
