@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { DrinksService } from './drinks.service';
 import { DrinksController } from './drinks.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { CloudinaryService } from 'src/components/cloudinary/cloudinary.service';
 
 @Module({
   controllers: [DrinksController],
