@@ -11,7 +11,7 @@ export class DrinksController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FileInterceptor('image_url'))
   async create(@UploadedFile() image: Express.Multer.File,@Body() createDrinkDto: CreateDrinkDto) {
     return this.drinksService.create(createDrinkDto,image);
   }

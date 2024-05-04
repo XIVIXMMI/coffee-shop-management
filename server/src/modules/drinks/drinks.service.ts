@@ -12,11 +12,13 @@ export class DrinksService {
     private cloudinaryService: CloudinaryService,
   ) { }
 
-  async create(createDrinkDto: CreateDrinkDto, image: Express.Multer.File) {
+  async create(createDrinkDto: CreateDrinkDto, image_url: Express.Multer.File) {
     try {
       const { drink_name, price } = createDrinkDto;
-
-      const imageUploadResult = await this.cloudinaryService.uploadFile(image);
+      if (!image_url) {
+        throw new Error("Image is missing");
+    }
+      const imageUploadResult = await this.cloudinaryService.uploadFile(image_url);
       const imageUrl = imageUploadResult.secure_url;
 
       const newDrinks = await this.prisma.drink.create({
@@ -39,8 +41,8 @@ export class DrinksService {
       }
       return newDrinks;
     } catch (error) {
-      if (image && image.path) {
-        await this.cloudinaryService.deleteImage(image.path);
+      if (image_url && image_url.path) {
+        await this.cloudinaryService.deleteImage(image_url.path);
       }
       console.error(`Error creating new drink:`, error);
       throw new Error(`Error creating new drink: ${error.message}`);
