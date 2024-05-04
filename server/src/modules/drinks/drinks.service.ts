@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateDrinkDto } from './dto/create-drink.dto';
 import { UpdateDrinkDto } from './dto/update-drink.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CloudinaryService } from 'src/components/cloudinary/cloudinary.service';
+import { CloudinaryService } from 'src/modules/cloudinary/cloudinary.service';
 import { ERROR_RESPONSE } from 'src/common/error.handle';
 import { ErrorCustom } from 'src/common/error.custom';
 
