@@ -8,6 +8,7 @@ type TErrorCode = 'PermissionDenied'
     | 'ValidIsEmail'
     | 'UserIsExisted'
     | 'DrinksIsNotExisted'
+    | 'MenuIsNotExisted'
 
 
 
@@ -42,6 +43,10 @@ export const ERROR_RESPONSE: Record<TErrorCode, IErrorResponse> = {
     DrinksIsNotExisted: {
         statusCode: HttpStatus.BAD_GATEWAY,
         message: 'Drinks is not existed'
+    },
+    MenuIsNotExisted: {
+        statusCode: HttpStatus.BAD_GATEWAY,
+        message: 'Menu is not existed'
     }
 }
 
