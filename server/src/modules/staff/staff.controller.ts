@@ -2,7 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { StaffService } from './staff.service';
 import { CreateStaffDto } from './dto/create-staff.dto';
 import { UpdateStaffDto } from './dto/update-staff.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('staff')
 @Controller('staff')
 export class StaffController {
   constructor(private readonly staffService: StaffService) {}
@@ -27,7 +29,7 @@ export class StaffController {
     return this.staffService.update(+id, updateStaffDto);
   }
 
-  @Delete(':id')
+  @Patch('/remove/:id')
   remove(@Param('id') id: string) {
     return this.staffService.remove(+id);
   }

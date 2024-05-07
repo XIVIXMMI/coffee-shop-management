@@ -2,7 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { EquipmentTypeService } from './equipment-type.service';
 import { CreateEquipmentTypeDto } from './dto/create-equipment-type.dto';
 import { UpdateEquipmentTypeDto } from './dto/update-equipment-type.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('equipment-type')
 @Controller('equipment-type')
 export class EquipmentTypeController {
   constructor(private readonly equipmentTypeService: EquipmentTypeService) {}

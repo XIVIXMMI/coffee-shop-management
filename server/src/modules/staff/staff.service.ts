@@ -2,6 +2,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateStaffDto } from './dto/create-staff.dto';
 import { UpdateStaffDto } from './dto/update-staff.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ErrorCustom } from 'src/common/error.custom';
+import { ERROR_RESPONSE } from 'src/common/error.handle';
 
 @Injectable()
 export class StaffService {
@@ -11,14 +13,7 @@ export class StaffService {
     const { staff_name, gender, address, phone_number, email, position, salary} = createStaffDto;
     const birthday = new Date(createStaffDto.birthday);
     const start_date = new Date(createStaffDto.start_date);
-
-    if(!(birthday instanceof Date) || isNaN(birthday.getTime())){
-      throw new BadRequestException('birthday must be a valid Date')
-    }
-    if(!(start_date instanceof Date) || isNaN(start_date.getTime())){
-      throw new BadRequestException('start_date must be a valid Date')
-    }
-
+    
     const newStaff = await this.prisma.staff.create({
       data: {
         staff_name,
@@ -29,14 +24,19 @@ export class StaffService {
         email,
         position,
         salary,
-        start_date
+        start_date,
+        deleted: false
       }
     });
     return newStaff;
   }
 
   findAll() {
-    return this.prisma.staff.findMany();
+    return this.prisma.staff.findMany({
+      where: {
+        deleted: false
+      }
+    });
   }
 
   async findOne(id: number) {
@@ -55,7 +55,19 @@ export class StaffService {
     });
   }
 
-  remove(id: number) {
-    return this.prisma.staff.delete({where: {staff_id: id}});
+  async remove(id: number) {
+    const remove = await this.prisma.staff.update({
+      where: {
+        staff_id: id
+      },
+      data: {
+        deleted: true
+      }
+    });
+    if(!remove){
+      throw new ErrorCustom(ERROR_RESPONSE.UserIsExisted);
+    }
+    return remove;
   }
 }
+

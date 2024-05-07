@@ -24,6 +24,7 @@ async function main() {
                     position: 'Manager',
                     salary: 50000.0,
                     start_date: new Date('2022-01-01'),
+                    deleted: false
                 },
                 {
                     staff_name: 'Jane Smith',
@@ -35,6 +36,7 @@ async function main() {
                     position: 'Sales Associate',
                     salary: 30000.0,
                     start_date: new Date('2022-01-15'),
+                    deleted: false
                 },
             ],
         });
