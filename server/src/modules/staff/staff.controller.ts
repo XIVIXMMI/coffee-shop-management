@@ -31,6 +31,6 @@ export class StaffController {
 
   @Patch('/remove/:id')
   remove(@Param('id') id: string) {
-    return this.staffService.remove(+id);
+    return this.staffService.softDeleted(+id);
   }
 }

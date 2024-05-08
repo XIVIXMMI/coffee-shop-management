@@ -2,10 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ErrorCustom } from 'src/common/error.custom';
+import { ERROR_RESPONSE } from 'src/common/error.handle';
+
 
 @Injectable()
 export class RoleService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async createRole(createRoleDto: CreateRoleDto) {
     const { role_name } = createRoleDto;
@@ -25,7 +28,7 @@ export class RoleService {
   async findOne(id: number) {
     const role = await this.prisma.role.findUnique({
       where: {
-        role_id : id
+        role_id: id
       }
     });
     return role;
@@ -33,12 +36,17 @@ export class RoleService {
 
   update(id: number, updateRoleDto: UpdateRoleDto) {
     return this.prisma.role.update({
-      where: {role_id: id},
+      where: { role_id: id },
       data: updateRoleDto,
     });
   }
 
-  remove(id: number) {
-    return this.prisma.role.delete({where:{role_id:id}});
+  async remove(id: number) {
+    const role = await this.prisma.role.findUnique({ where: { role_id: id } });
+    if (!role) {
+      throw new ErrorCustom(ERROR_RESPONSE.RoleIsNotExisted)
+    }
+    const deletedRole = await this.prisma.role.delete({ where: { role_id: id } });
+    return deletedRole;
   }
 }

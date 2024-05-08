@@ -31,6 +31,11 @@ export class StaffService {
     return newStaff;
   }
 
+    
+  displayError(){
+    throw new ErrorCustom(ERROR_RESPONSE.StaffIsNotExisted);
+  }
+
   findAll() {
     return this.prisma.staff.findMany({
       where: {
@@ -42,20 +47,47 @@ export class StaffService {
   async findOne(id: number) {
     const staff = await this.prisma.staff.findUnique({
       where: {
-        staff_id: id
+        staff_id: id,
+        deleted: false
       }
-    })
+    });
+    if(!staff){
+      this.displayError();
+    }
     return staff;
   }
 
-  update(id: number, updateStaffDto: UpdateStaffDto) {
-    return this.prisma.staff.update({
-      where: {staff_id: id},
-      data: updateStaffDto
+  async findObject(id: number) {
+    const find = await this.prisma.staff.findUnique({
+      where: {
+        staff_id: id,
+        deleted: false
+      }
     });
+    if (!find) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
-  async remove(id: number) {
+  async update(id: number, updateStaffDto: UpdateStaffDto) {
+    const findStaff = await this.findObject(id);
+    if(!findStaff){
+      this.displayError();
+    }
+    const update = await this.prisma.staff.update({
+      where: {staff_id: id, deleted: false},
+      data: updateStaffDto
+    });
+    return update;
+  }
+
+  async softDeleted(id: number) {
+    const findStaff = this.findObject(id);
+    if(!findStaff){
+      this.displayError();
+    }
     const remove = await this.prisma.staff.update({
       where: {
         staff_id: id
@@ -64,10 +96,6 @@ export class StaffService {
         deleted: true
       }
     });
-    if(!remove){
-      throw new ErrorCustom(ERROR_RESPONSE.UserIsExisted);
-    }
     return remove;
   }
 }
-

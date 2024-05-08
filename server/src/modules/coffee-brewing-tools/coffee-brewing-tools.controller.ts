@@ -9,10 +9,10 @@ import { ApiTags } from '@nestjs/swagger';
 export class CoffeeBrewingToolsController {
   constructor(private readonly coffeeBrewingToolsService: CoffeeBrewingToolsService) {}
 
-  @Post()
-  create(@Body() createCoffeeBrewingToolDto: CreateCoffeeBrewingToolDto) {
-    return this.coffeeBrewingToolsService.create(createCoffeeBrewingToolDto);
-  }
+  // @Post()
+  // create(@Body() createCoffeeBrewingToolDto: CreateCoffeeBrewingToolDto) {
+  //   return this.coffeeBrewingToolsService.create(createCoffeeBrewingToolDto);
+  // }
 
   @Get()
   findAll() {

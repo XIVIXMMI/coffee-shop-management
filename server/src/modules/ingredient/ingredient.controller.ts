@@ -9,10 +9,10 @@ import { ApiTags } from '@nestjs/swagger';
 export class IngredientController {
   constructor(private readonly ingredientService: IngredientService) {}
 
-  @Post()
-  create(@Body() createIngredientDto: CreateIngredientDto) {
-    return this.ingredientService.create(createIngredientDto);
-  }
+  // @Post()
+  // create(@Body() createIngredientDto: CreateIngredientDto) {
+  //   return this.ingredientService.create(createIngredientDto);
+  // }
 
   @Get()
   findAll() {

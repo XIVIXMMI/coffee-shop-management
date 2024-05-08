@@ -9,10 +9,10 @@ import { ApiTags } from '@nestjs/swagger';
 export class ShopEquipmentController {
   constructor(private readonly shopEquipmentService: ShopEquipmentService) {}
 
-  @Post()
-  create(@Body() createShopEquipmentDto: CreateShopEquipmentDto) {
-    return this.shopEquipmentService.create(createShopEquipmentDto);
-  }
+  // @Post()
+  // create(@Body() createShopEquipmentDto: CreateShopEquipmentDto) {
+  //   return this.shopEquipmentService.create(createShopEquipmentDto);
+  // }
 
   @Get()
   findAll() {
