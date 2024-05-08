@@ -9,6 +9,12 @@ type TErrorCode = 'PermissionDenied'
     | 'UserIsExisted'
     | 'DrinksIsNotExisted'
     | 'MenuIsNotExisted'
+    |   'RoleIsNotExisted'
+    |   'StaffIsNotExisted'
+    |   'IngredientIsNotExisted'
+    |   'ToolIsNotExisted'
+    |   'ItemIsNotExisted'
+
 
 
 
@@ -41,12 +47,32 @@ export const ERROR_RESPONSE: Record<TErrorCode, IErrorResponse> = {
         message: 'User is existed'
     },
     DrinksIsNotExisted: {
-        statusCode: HttpStatus.BAD_GATEWAY,
+        statusCode: HttpStatus.BAD_REQUEST,
         message: 'Drinks is not existed'
     },
     MenuIsNotExisted: {
-        statusCode: HttpStatus.BAD_GATEWAY,
+        statusCode: HttpStatus.BAD_REQUEST,
         message: 'Menu is not existed'
+    },
+    RoleIsNotExisted: {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Role is not existed'
+    },
+    StaffIsNotExisted: {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Staff is not existed'
+    },
+    IngredientIsNotExisted: {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Ingredient is not existed'
+    },
+    ToolIsNotExisted: {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Tool is not existed'
+    },
+    ItemIsNotExisted: {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Item is not existed'
     }
 }
 

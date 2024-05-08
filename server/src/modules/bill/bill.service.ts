@@ -124,9 +124,9 @@ export class BillService {
     });
   }
 
-  remove(id: number) {
-    return this.prisma.bill.delete({ where: { bill_id: id } });
-  }
+  // remove(id: number) {
+  //   return this.prisma.bill.delete({ where: { bill_id: id } });
+  // }
 
   async findDrinkByName(drink_name: string) {
     const drinkName = await this.prisma.drink.findFirst({

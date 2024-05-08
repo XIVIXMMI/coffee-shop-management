@@ -3,14 +3,15 @@ import { DrinksService } from './drinks.service';
 import { CreateDrinkDto } from './dto/create-drink.dto';
 import { UpdateDrinkDto } from './dto/update-drink.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { JwtAuthGuard } from 'src/third-parties/guard/jwt-guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('drinks')
 @Controller('drinks')
 export class DrinksController {
   constructor(private readonly drinksService: DrinksService,) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image_url'))
   async create(@UploadedFile() image: Express.Multer.File,@Body() createDrinkDto: CreateDrinkDto) {
     return this.drinksService.create(createDrinkDto,image);

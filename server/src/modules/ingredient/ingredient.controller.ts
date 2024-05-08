@@ -2,15 +2,17 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { IngredientService } from './ingredient.service';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { UpdateIngredientDto } from './dto/update-ingredient.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('ingredient')
 @Controller('ingredient')
 export class IngredientController {
   constructor(private readonly ingredientService: IngredientService) {}
 
-  @Post()
-  create(@Body() createIngredientDto: CreateIngredientDto) {
-    return this.ingredientService.create(createIngredientDto);
-  }
+  // @Post()
+  // create(@Body() createIngredientDto: CreateIngredientDto) {
+  //   return this.ingredientService.create(createIngredientDto);
+  // }
 
   @Get()
   findAll() {

@@ -2,15 +2,17 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CoffeeBrewingToolsService } from './coffee-brewing-tools.service';
 import { CreateCoffeeBrewingToolDto } from './dto/create-coffee-brewing-tool.dto';
 import { UpdateCoffeeBrewingToolDto } from './dto/update-coffee-brewing-tool.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('coffee-brewing-tools')
 @Controller('coffee-brewing-tools')
 export class CoffeeBrewingToolsController {
   constructor(private readonly coffeeBrewingToolsService: CoffeeBrewingToolsService) {}
 
-  @Post()
-  create(@Body() createCoffeeBrewingToolDto: CreateCoffeeBrewingToolDto) {
-    return this.coffeeBrewingToolsService.create(createCoffeeBrewingToolDto);
-  }
+  // @Post()
+  // create(@Body() createCoffeeBrewingToolDto: CreateCoffeeBrewingToolDto) {
+  //   return this.coffeeBrewingToolsService.create(createCoffeeBrewingToolDto);
+  // }
 
   @Get()
   findAll() {
