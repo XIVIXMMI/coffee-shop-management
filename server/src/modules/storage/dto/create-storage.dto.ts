@@ -37,7 +37,7 @@ export class CreateStorageDto {
     @IsNotEmpty()
     @IsInt()
     @ApiProperty({ example: '1', description: 'Type of the item' })
-    equipment_type: number;
+    equipmenttype_id: number;
 
 }
 

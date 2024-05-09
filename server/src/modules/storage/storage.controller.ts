@@ -3,8 +3,9 @@ import { StorageService } from './storage.service';
 import { CreateStorageDto } from './dto/create-storage.dto';
 import { UpdateStorageDto } from './dto/update-storage.dto';
 import { JwtAuthGuard } from 'src/third-parties/guard/jwt-guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @ApiTags('storage')
 @Controller('storage')
 export class StorageController {

@@ -28,7 +28,7 @@ export class UpdateStaffDto {
     email: string;
 
     @IsString()
-    @ApiProperty({example: '+john@example.com', description: 'Email Number of employee'})
+    @ApiProperty({example: 'staff', description: 'Position of employee'})
     position: string;
 
     @IsNumber()
