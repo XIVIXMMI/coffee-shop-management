@@ -14,6 +14,7 @@ type TErrorCode = 'PermissionDenied'
     |   'IngredientIsNotExisted'
     |   'ToolIsNotExisted'
     |   'ItemIsNotExisted'
+    |   'EquipmentTypeIsNotExisted'
 
 
 
@@ -73,6 +74,10 @@ export const ERROR_RESPONSE: Record<TErrorCode, IErrorResponse> = {
     ItemIsNotExisted: {
         statusCode: HttpStatus.BAD_REQUEST,
         message: 'Item is not existed'
+    },
+    EquipmentTypeIsNotExisted: {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Equipment type is not existed'
     }
 }
 

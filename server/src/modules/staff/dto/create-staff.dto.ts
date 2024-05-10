@@ -36,7 +36,7 @@ export class CreateStaffDto {
 
     @IsNotEmpty()
     @IsString()
-    @ApiProperty({example: '+john@example.com', description: 'Email Number of employee'})
+    @ApiProperty({example: 'Staff', description: 'Position Number of employee'})
     position: string;
 
     @IsNotEmpty()

@@ -10,7 +10,7 @@ export class StorageService {
   constructor(private prisma: PrismaService) { }
 
   async create(createStorageDto: CreateStorageDto, createdBy: number) {
-    const { goods_name, arrival_date, cost_price, quantity, goods_unit, equipment_type } = createStorageDto;
+    const { goods_name, arrival_date, cost_price, quantity, goods_unit, equipmenttype_id } = createStorageDto;
 
     let newGoods; 
     const existingItem = await this.prisma.storage.findFirst({
@@ -34,7 +34,7 @@ export class StorageService {
       newGoods = await this.prisma.storage.create({
         data: {
           ...createStorageDto,
-          equipmenttype_id: createStorageDto.equipment_type,
+          equipmenttype_id: createStorageDto.equipmenttype_id,
           created_by: createdBy,
           deleted: false
         }
@@ -43,21 +43,21 @@ export class StorageService {
 
     // Kiểm tra nếu newGoods được gán giá trị trước khi truy cập vào thuộc tính storage_id
     if (newGoods) {
-      if (equipment_type === 1) {
+      if (equipmenttype_id === 1) {
         await this.prisma.ingredient.create({
           data: {
             storage_id: newGoods.storage_id,
             ingredient_name: goods_name
           }
         });
-      } else if (equipment_type === 2) {
+      } else if (equipmenttype_id === 2) {
         await this.prisma.coffeeBrewingTool.create({
           data: {
             storage_id: newGoods.storage_id,
             brewingtool_name: goods_name
           }
         });
-      } else if (equipment_type === 3) {
+      } else if (equipmenttype_id === 3) {
         await this.prisma.shopEquipment.create({
           data: {
             storage_id: newGoods.storage_id,
