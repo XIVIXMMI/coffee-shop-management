@@ -10,10 +10,12 @@ export class StaffService {
   constructor(private prisma: PrismaService) {}
 
   async create(createStaffDto: CreateStaffDto) {
-    const { staff_name, gender, address, phone_number, email, position, salary} = createStaffDto;
+    const { staff_name, gender, address, phone_number, email, position} = createStaffDto;
     const birthday = new Date(createStaffDto.birthday);
     const start_date = new Date(createStaffDto.start_date);
-    
+
+    const salaryNumber = +createStaffDto.salary;
+
     const newStaff = await this.prisma.staff.create({
       data: {
         staff_name,
@@ -23,7 +25,7 @@ export class StaffService {
         phone_number,
         email,
         position,
-        salary,
+        salary:salaryNumber,
         start_date,
         deleted: false
       }

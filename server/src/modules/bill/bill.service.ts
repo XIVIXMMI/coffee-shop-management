@@ -103,7 +103,15 @@ export class BillService {
   }
 
   findAll() {
-    return this.prisma.bill.findMany();
+    return this.prisma.bill.findMany({
+      include: {
+        billdetails: {
+          include: {
+            drink: true
+          }
+        }
+      }
+    });
   }
 
   async findOne(id: number) {

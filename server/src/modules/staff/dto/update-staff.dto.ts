@@ -31,7 +31,6 @@ export class UpdateStaffDto {
     @ApiProperty({example: 'staff', description: 'Position of employee'})
     position: string;
 
-    @IsNumber()
     @ApiProperty({example: '30000000', description: 'Base salary of employee'})
     salary: number;
 
