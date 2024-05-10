@@ -16,6 +16,8 @@ import { PassportModule } from '@nestjs/passport';
 import { BillModule } from './modules/bill/bill.module';
 import { MenuModule } from './modules/menu/menu.module';
 import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { FormDataInterceptor } from './third-parties/interceptors/transform.interceptor';
 
 
 @Module({
@@ -36,6 +38,11 @@ import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
     CloudinaryModule
     ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: FormDataInterceptor,
+    // },
+  ],
 })
 export class AppModule { }

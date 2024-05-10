@@ -28,6 +28,5 @@ export class CreateDrinkDto {
     image_url: string;
 
     @ApiProperty({ type: [DrinkDetailsDto], description: 'Details of the ingredients of the drink', format: 'array' })
-    @IsArray()
     drink_details: Record<string,number>[];
 }

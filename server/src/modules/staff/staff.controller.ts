@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors } from '@nestjs/common';
 import { StaffService } from './staff.service';
 import { CreateStaffDto } from './dto/create-staff.dto';
 import { UpdateStaffDto } from './dto/update-staff.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { FormDataInterceptor } from 'src/third-parties/interceptors/transform.interceptor';
 
 @ApiTags('staff')
 @Controller('staff')
@@ -10,6 +11,7 @@ export class StaffController {
   constructor(private readonly staffService: StaffService) {}
 
   @Post()
+  @UseInterceptors(FormDataInterceptor)
   create(@Body() createStaffDto: CreateStaffDto) {
     return this.staffService.create(createStaffDto);
   }

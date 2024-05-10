@@ -40,7 +40,6 @@ export class CreateStaffDto {
     position: string;
 
     @IsNotEmpty()
-    @IsNumber()
     @ApiProperty({example: '30000000', description: 'Base salary of employee'})
     salary: number;
 
