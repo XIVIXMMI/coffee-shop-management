@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateDrinkDto } from './dto/create-drink.dto';
-import { UpdateDrinkDto } from './dto/update-drink.dto';
+import { CreateDrinkDetailsDto, CreateDrinkDto } from './dto/create-drink.dto';
+import { UpdateDrinkDetailDto, UpdateDrinkDto, DrinkDetailsDto } from './dto/update-drink.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CloudinaryService } from 'src/modules/cloudinary/cloudinary.service';
 import { ERROR_RESPONSE } from 'src/common/error.handle';
@@ -17,7 +17,7 @@ export class DrinksService {
       const { drink_name, price } = createDrinkDto;
       if (!image_url) {
         throw new Error("Image is missing");
-    }
+      }
       const imageUploadResult = await this.cloudinaryService.uploadFile(image_url);
       const imageUrl = imageUploadResult.secure_url;
 
@@ -29,16 +29,17 @@ export class DrinksService {
         },
       });
 
-      for (let drinkDetails of createDrinkDto.drink_details) {
-        const ingredientWeightInKg = drinkDetails.ingredient_weight / 1000;
-        const a = await this.prisma.drinksDetails.create({
-          data: {
-            drink_id: newDrinks.drink_id,
-            ingredient_id: +drinkDetails.ingredient_id,
-            ingredient_weight: +ingredientWeightInKg
-          }
-        });
-      }
+      // for (let drinkDetails of createDrinkDto.drink_details) {
+      //   const ingredientWeightInKg = drinkDetails.ingredient_weight / 1000;
+      //   const a = await this.prisma.drinksDetails.create({
+      //     data: {
+      //       drink_id: newDrinks.drink_id,
+      //       ingredient_id: +drinkDetails.ingredient_id,
+      //       ingredient_weight: +ingredientWeightInKg
+      //     }
+      //   });
+      // }
+
       return newDrinks;
     } catch (error) {
       if (image_url && image_url.path) {
@@ -70,16 +71,6 @@ export class DrinksService {
         price: updateDrinkDto.price
       }
     });
-    for (let drinkDetails of updateDrinkDto.drink_details) {
-      // Chỉ nhập gram ko nhập kg
-      const ingredientWeightInKg = drinkDetails.ingredient_weight / 1000;
-      await this.prisma.drinksDetails.update({
-        where: { drink_id_ingredient_id: { drink_id: id, ingredient_id: drinkDetails.ingredient_id } },
-        data: {
-          ingredient_weight: ingredientWeightInKg,
-        },
-      });
-    }
     return updateDrink;
   }
 
@@ -92,19 +83,90 @@ export class DrinksService {
     if (!removeDrinkDetails) {
       throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
     }
-    const deletePromises = removeDrinkDetails.map(async item =>
-      await this.prisma.drinksDetails.delete({
+    return this.prisma.drink.delete({ where: { drink_id: id } });
+  }
+
+  async createDrinkDetail(createDrinkDetail: CreateDrinkDetailsDto) {
+    try {
+      const createDetailsPromises = createDrinkDetail.drink_details.map(async (item) => {
+        // Check if the ingredient already exists for the given drink
+        const existingDetail = await this.prisma.drinksDetails.findUnique({
+          where: {
+            drink_id_ingredient_id: {
+              drink_id: item.drink_id,
+              ingredient_id: item.ingredient_id,
+            }
+          }
+        });
+        if (existingDetail) {
+          throw new Error(`Ingredient with ID ${item.ingredient_id} already exists for drink with ID ${item.drink_id}`);
+        }
+        // Create the drink detail if it doesn't exist
+        const ingredientWeightInKg = item.ingredient_weight / 1000;
+        return await this.prisma.drinksDetails.create({
+          data: {
+            drink_id: item.drink_id,
+            ingredient_id: item.ingredient_id,
+            ingredient_weight: ingredientWeightInKg
+          }
+        });
+      });
+
+      const details = await Promise.all(createDetailsPromises);
+      return details;
+    } catch (error) {
+      console.error('Error creating drink details:', error.message);
+      throw new Error(`Failed to create drink details: ${error.message}`);
+    }
+  }
+
+  async updateDrinkDetailDto(drink_id: number, ingredient_id: number, drinksDetails: DrinkDetailsDto) {
+    try {
+      const findDrink = await this.prisma.drink.findUnique({
+        where: {
+          drink_id: +drink_id
+        }
+      });
+      if (!findDrink) {
+        throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
+      }
+      const findIngre = await this.prisma.ingredient.findUnique({
+        where: {
+          ingredient_id: +ingredient_id
+        }
+      });
+      if (!findIngre) {
+        throw new ErrorCustom(ERROR_RESPONSE.IngredientIsNotExisted)
+      }
+      const findDrinkDetails = await this.prisma.drinksDetails.findUnique({
         where: {
           drink_id_ingredient_id: {
-            drink_id: item.drink_id,
-            ingredient_id: item.ingredient_id
+            drink_id: +drink_id, 
+            ingredient_id: +ingredient_id
           }
         }
-      })
-    );
-    await Promise.all(deletePromises);
-    return this.prisma.drink.delete({ where: { drink_id: id } });
-
+      });
+      if(!findDrinkDetails){
+        throw new ErrorCustom(ERROR_RESPONSE.ItemIsNotExisted);
+      }
+      const ingredientWeightInKg = drinksDetails.ingredient_weight / 1000;
+      const updatedDrinkDetail = await this.prisma.drinksDetails.update({
+        where: {
+          drink_id_ingredient_id: {
+            drink_id: +drink_id,
+            ingredient_id: +ingredient_id
+          }
+        },
+        data: {
+          ingredient_id: +drinksDetails.ingredient_id,
+          ingredient_weight: +ingredientWeightInKg
+        },
+      });
+      return updatedDrinkDetail;
+    } catch (error) {
+      console.error('Error updating drink details:', error.message);
+      throw new Error(`Failed to update drink details: ${error.message}`);
+    }
   }
 
 }
