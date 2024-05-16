@@ -117,7 +117,11 @@ export class StorageService {
     }
     const update = this.prisma.storage.update({
       where: { storage_id: id },
-      data: updateStorageDto
+      data: {...updateStorageDto,
+        cost_price:+updateStorageDto.cost_price,
+        quantity:+updateStorageDto.quantity,
+        equipmenttype_id:+updateStorageDto.equipmenttype_id
+      }
     });
     return update;
   }

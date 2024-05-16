@@ -15,6 +15,8 @@ type TErrorCode = 'PermissionDenied'
     |   'ToolIsNotExisted'
     |   'ItemIsNotExisted'
     |   'EquipmentTypeIsNotExisted'
+    |   'NotEnoughWeight'
+    |   'BillIsNotExisted'
 
 
 
@@ -78,6 +80,14 @@ export const ERROR_RESPONSE: Record<TErrorCode, IErrorResponse> = {
     EquipmentTypeIsNotExisted: {
         statusCode: HttpStatus.BAD_REQUEST,
         message: 'Equipment type is not existed'
+    },
+    NotEnoughWeight: {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Not enough weight '
+    },
+    BillIsNotExisted: {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Bill is not existed'
     }
 }
 

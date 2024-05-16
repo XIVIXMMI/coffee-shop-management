@@ -13,7 +13,6 @@ export class BillController {
   @Post()
   @UseGuards(JwtAuthGuard)
   create(@Body() createBillDto: CreateBillDto,@Req() request) {
-    //console.log(createBillDto)
     return this.billService.create(createBillDto,request.user.user_id);
   }
 

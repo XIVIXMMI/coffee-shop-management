@@ -10,6 +10,7 @@ export class BillService {
   constructor(private prisma: PrismaService) { }
 
   // TODO: Xử lý ngoại lệ khi nhập 2 item, 1 item đã có trong db và 1 item chưa có trong db
+  // TODO: Tạo bill trước khi tạo billdetails nên totalprice = 0
   async create(createBillDto: CreateBillDto, createdBy: number) {
     const billDate = new Date();
     let totalPrice = 0;
@@ -65,7 +66,7 @@ export class BillService {
 
       const countQuantity = currentStorages.filter(storage => storage.quantity > 0).length;
       if (countQuantity < getIngredientName.length) {
-        throw new Error("Not enough quantity");
+        throw new ErrorCustom(ERROR_RESPONSE.NotEnoughWeight);
       }
 
       const updatePromises = currentStorages.map(async storage => {
@@ -85,7 +86,7 @@ export class BillService {
         data: {
           drink_id: getIdDrink,
           bill_id: newBill.bill_id,
-          quantity: detail.quantity,
+          quantity: +detail.quantity,
           price: getDrinkPrice
         }
       });
@@ -96,7 +97,7 @@ export class BillService {
         bill_id: newBill.bill_id,
       },
       data: {
-        total_price: totalPrice,
+        total_price: +totalPrice,
       },
     });
     return bill;
@@ -114,7 +115,27 @@ export class BillService {
     });
   }
 
+  displayErrorMessage(){
+    throw new ErrorCustom(ERROR_RESPONSE.BillIsNotExisted);
+  }
+
+  async findBillById(id: number){
+    const bill = this.prisma.bill.findUnique({
+      where: {
+        bill_id: id
+      }
+    });
+    if(!bill){
+      this.displayErrorMessage();
+    }
+    return bill;
+  }
+
   async findOne(id: number) {
+    const findBill = this.findBillById(id);
+    if(!findBill){
+      this.displayErrorMessage();
+    }
     const bill = await this.prisma.bill.findUnique({
       where: {
         bill_id: id
@@ -124,6 +145,10 @@ export class BillService {
   }
 
   update(id: number, updateBillDto: UpdateBillDto) {
+    const findBill = this.findBillById(id);
+    if(!findBill){
+      this.displayErrorMessage();
+    }
     return this.prisma.bill.update({
       where: {
         bill_id: id
@@ -136,6 +161,22 @@ export class BillService {
   //   return this.prisma.bill.delete({ where: { bill_id: id } });
   // }
 
+  async findDrinkById(drink_id: number) {
+    const id = await this.prisma.drink.findFirst({
+      where: {
+        drink_id
+      },
+      select: {
+        drink_id: true,
+        price: true
+      }
+    })
+    if(!id){
+      throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
+    }
+    return id;
+  }
+
   async findDrinkByName(drink_name: string) {
     const drinkName = await this.prisma.drink.findFirst({
       where: {
@@ -146,9 +187,9 @@ export class BillService {
         price: true
       }
     })
-    // if(!drinkName){
-    //   throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
-    // }
+    if(!drinkName){
+      throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
+    }
     return drinkName;
   }
 
@@ -157,7 +198,8 @@ export class BillService {
       where: {
         drink_id
       }
-    })
+    });
+    return drinkId;
   }
 
 }
