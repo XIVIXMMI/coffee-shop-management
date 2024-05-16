@@ -120,6 +120,15 @@ export class DrinksService {
     }
   }
 
+  findAllDrinkDetails(){
+    return this.prisma.drinksDetails.findMany({
+      include: {
+        drink: true,
+        ingredient: true
+      }
+    });
+  }
+
   async updateDrinkDetailDto(drink_id: number, ingredient_id: number, drinksDetails: DrinkDetailsDto) {
     try {
       const findDrink = await this.prisma.drink.findUnique({
@@ -166,6 +175,50 @@ export class DrinksService {
     } catch (error) {
       console.error('Error updating drink details:', error.message);
       throw new Error(`Failed to update drink details: ${error.message}`);
+    }
+  }
+
+  async removeDrinkDetails (drink_id: number, ingredient_id: number){
+    try {
+      const findDrink = await this.prisma.drink.findUnique({
+        where: {
+          drink_id: +drink_id
+        }
+      });
+      if (!findDrink) {
+        throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
+      }
+      const findIngre = await this.prisma.ingredient.findUnique({
+        where: {
+          ingredient_id: +ingredient_id
+        }
+      });
+      if (!findIngre) {
+        throw new ErrorCustom(ERROR_RESPONSE.IngredientIsNotExisted)
+      }
+      const findDrinkDetails = await this.prisma.drinksDetails.findUnique({
+        where: {
+          drink_id_ingredient_id: {
+            drink_id: +drink_id, 
+            ingredient_id: +ingredient_id
+          }
+        }
+      });
+      if(!findDrinkDetails){
+        throw new ErrorCustom(ERROR_RESPONSE.ItemIsNotExisted);
+      }
+      const removeDetails = await this.prisma.drinksDetails.delete({
+        where: {
+          drink_id_ingredient_id: {
+            drink_id: drink_id,
+            ingredient_id: ingredient_id
+          }
+        }
+      });
+      return removeDetails;
+    } catch (error) {
+      console.error('Error deleting drink details:', error.message);
+      throw new Error(`Failed to deleting drink details: ${error.message}`);
     }
   }
 

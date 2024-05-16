@@ -5,7 +5,6 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateEquipmentTypeDto extends PartialType(CreateEquipmentTypeDto) {
 
-    @IsString()
     @ApiProperty({ example: 'coffee brewing tools', description: 'name of equipment type'})
     equipmenttype_name?: string;
 }

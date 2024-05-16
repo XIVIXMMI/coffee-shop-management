@@ -13,7 +13,6 @@ export class DrinkDetailsDto {
 export class UpdateDrinkDto {
 
     @ApiProperty({ description: 'The name of the drink', example: 'Coffee' })
-    @IsString()
     drink_name: string;
 
     @ApiProperty({ description: 'The price of the drink', example: 30000 })
