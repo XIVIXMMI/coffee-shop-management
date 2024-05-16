@@ -22,6 +22,11 @@ export class DrinksController {
     return this.drinksService.create(createDrinkDto,image);
   }
 
+  @Get('/drink-details')
+  findAllDrinkDetails() {
+    return this.drinksService.findAllDrinkDetails();
+  }
+
   @Get()
   findAll() {
     return this.drinksService.findAll();
@@ -58,6 +63,11 @@ export class DrinksController {
                               @Body() drinkDetailsDto: DrinkDetailsDto) {
     console.log(drinkDetailsDto);
     return this.drinksService.updateDrinkDetailDto(drink_id,ingredient_id,drinkDetailsDto);
+  }
+
+  @Delete('/drink-details/:drink_id/:ingredient_id')
+  removeDrinkDetails(@Param('drink_id') drink_id: number, @Param('ingredient_id') ingredient_id: number){
+    return this.drinksService.removeDrinkDetails(+drink_id,+ingredient_id);
   }
 
 }

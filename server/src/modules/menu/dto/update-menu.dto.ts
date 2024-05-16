@@ -1,13 +1,13 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateMenuDto } from './create-menu.dto';
-import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateMenuDetailDto {
 
-    @IsNumber()
+    @ApiProperty({ example: 'Coffee Menu', description: 'Name of the coffee' })
     menu_id_input: number;
 
-    @IsNumber()
+    @ApiProperty({ example: 1, description: 'Drink ID of the menu' })
     drink_id_input: number;
 }
 
