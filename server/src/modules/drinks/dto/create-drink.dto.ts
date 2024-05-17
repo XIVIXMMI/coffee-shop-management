@@ -1,5 +1,5 @@
 import { ApiProperty, ApiResponse } from "@nestjs/swagger";
-import { IsString, IsNotEmpty, IsNumber, IsArray } from "class-validator";
+import { IsString, IsNotEmpty, IsNumber, IsArray, IsInt } from "class-validator";
 
 export class DrinkDetailsDto {
 
@@ -35,6 +35,13 @@ export class CreateDrinkDto {
 }
 
 export class CreateDrinkDetailsDto {
+
+
+    @ApiProperty({ example: 1, description: 'The ID of Drink'})
+    @IsInt()
+    drink_id: number;
+
     @ApiProperty({ type: [DrinkDetailsDto], description: 'Details of the ingredients of the drink', format: 'array' })
     drink_details: DrinkDetailsDto[];
+
 }
