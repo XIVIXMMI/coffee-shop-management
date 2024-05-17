@@ -88,12 +88,16 @@ export class DrinksService {
 
   async createDrinkDetail(createDrinkDetail: CreateDrinkDetailsDto) {
     try {
+      if (!createDrinkDetail || !Array.isArray(createDrinkDetail.drink_details)) {
+        throw new Error('Invalid input data: drink_details is not defined or not an array');
+      }
+      const drinkId = createDrinkDetail.drink_id;
       const createDetailsPromises = createDrinkDetail.drink_details.map(async (item) => {
         // Check if the ingredient already exists for the given drink
         const existingDetail = await this.prisma.drinksDetails.findUnique({
           where: {
             drink_id_ingredient_id: {
-              drink_id: item.drink_id,
+              drink_id: +drinkId,  
               ingredient_id: item.ingredient_id,
             }
           }
@@ -102,16 +106,17 @@ export class DrinksService {
           throw new Error(`Ingredient with ID ${item.ingredient_id} already exists for drink with ID ${item.drink_id}`);
         }
         // Create the drink detail if it doesn't exist
-        const ingredientWeightInKg = item.ingredient_weight / 1000;
+        const ingredientWeightInKg = +item.ingredient_weight / 1000;
         return await this.prisma.drinksDetails.create({
           data: {
-            drink_id: item.drink_id,
+            drink_id: +drinkId,
             ingredient_id: item.ingredient_id,
-            ingredient_weight: ingredientWeightInKg
+            ingredient_weight: +ingredientWeightInKg
           }
         });
       });
-
+      console.log(drinkId);
+      
       const details = await Promise.all(createDetailsPromises);
       return details;
     } catch (error) {
@@ -120,13 +125,34 @@ export class DrinksService {
     }
   }
 
-  findAllDrinkDetails(){
-    return this.prisma.drinksDetails.findMany({
-      include: {
-        drink: true,
-        ingredient: true
+  async findAllDrinkDetails(){
+    const drinkDetails = await this.prisma.drinksDetails.findMany(
+    //   {
+    //   include: {
+    //     drink: true,
+    //     ingredient: true
+    //   }
+    // }
+  );
+
+    const formattedDetails = drinkDetails.reduce((accumulator,currentValue) => {
+      const {drink_id, ingredient_id, ingredient_weight} = currentValue;
+      let details = accumulator.find(item => item.drink_id === drink_id);
+
+      // Nếu không tìm thấy drink_id trong acc tạo mới một đối tượng {drink_id, drink_details: []} và đẩy vào accumulator
+      if(!details){
+        details = {drink_id, drink_details: []};
+        accumulator.push(details);
       }
-    });
+
+      details.drink_details.push({
+        ingredient_id,
+        ingredient_weight
+      });
+
+      return accumulator;
+    },[]);
+    return formattedDetails;
   }
 
   async updateDrinkDetailDto(drink_id: number, ingredient_id: number, drinksDetails: DrinkDetailsDto) {
@@ -178,7 +204,7 @@ export class DrinksService {
     }
   }
 
-  async removeDrinkDetails (drink_id: number, ingredient_id: number){
+  async removeDrinkDetails (drink_id: number){
     try {
       const findDrink = await this.prisma.drink.findUnique({
         where: {
@@ -188,32 +214,19 @@ export class DrinksService {
       if (!findDrink) {
         throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
       }
-      const findIngre = await this.prisma.ingredient.findUnique({
+      const findDrinkDetails = await this.prisma.drinksDetails.findMany({
         where: {
-          ingredient_id: +ingredient_id
-        }
-      });
-      if (!findIngre) {
-        throw new ErrorCustom(ERROR_RESPONSE.IngredientIsNotExisted)
-      }
-      const findDrinkDetails = await this.prisma.drinksDetails.findUnique({
-        where: {
-          drink_id_ingredient_id: {
             drink_id: +drink_id, 
-            ingredient_id: +ingredient_id
-          }
         }
       });
       if(!findDrinkDetails){
         throw new ErrorCustom(ERROR_RESPONSE.ItemIsNotExisted);
       }
-      const removeDetails = await this.prisma.drinksDetails.delete({
+      const removeDetails = await this.prisma.drinksDetails.deleteMany({
         where: {
-          drink_id_ingredient_id: {
             drink_id: drink_id,
-            ingredient_id: ingredient_id
           }
-        }
+        
       });
       return removeDetails;
     } catch (error) {

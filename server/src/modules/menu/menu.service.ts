@@ -52,17 +52,17 @@ export class MenuService {
     return this.prisma.menu.findMany();
   }
 
-  async findOne(id: number) {
-    const menu = await this.prisma.menu.findUnique({
-      where: {
-        menu_id: id
-      }
-    });
-    return menu;
-  }
+  // async findOne(id: number) {
+  //   const menu = await this.prisma.menu.findUnique({
+  //     where: {
+  //       menu_id: id
+  //     }
+  //   });
+  //   return menu;
+  // }
 
-  update(id: number, updateMenuDto: UpdateMenuDto) {
-    return this.prisma.menu.update({
+  async update(id: number, updateMenuDto: UpdateMenuDto) {
+    return await this.prisma.menu.update({
       where: {
         menu_id: id
       },
@@ -89,8 +89,8 @@ export class MenuService {
     return menu;
   }
 
-  remove(id: number) {
-    return this.prisma.menu.delete({
+  async remove(id: number) {
+    return await this.prisma.menu.delete({
       where: {
         menu_id: id
       }
@@ -98,7 +98,7 @@ export class MenuService {
   }
 
   async displayMenuItem(id: number) {
-    const getMenuItem = await this.prisma.menu.findMany({
+    const getMenuItem = await this.prisma.menu.findUnique({
       where: {
         menu_id: id
       },
@@ -113,11 +113,12 @@ export class MenuService {
     if (!getMenuItem) {
       throw new ErrorCustom(ERROR_RESPONSE.MenuIsNotExisted);
     }
-    const b = getMenuItem.map( items => {
-      if ( items.menudetails.length <= 0) {
-        throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
-      }
-    });
+    const hasDetails = getMenuItem.menudetails.some(item => item.drink);
+
+    if (!hasDetails) {
+      throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
+    }
+
     return getMenuItem;
   }
 }

@@ -65,9 +65,9 @@ export class DrinksController {
     return this.drinksService.updateDrinkDetailDto(drink_id,ingredient_id,drinkDetailsDto);
   }
 
-  @Delete('/drink-details/:drink_id/:ingredient_id')
-  removeDrinkDetails(@Param('drink_id') drink_id: number, @Param('ingredient_id') ingredient_id: number){
-    return this.drinksService.removeDrinkDetails(+drink_id,+ingredient_id);
+  @Delete('/drink-details/:drink_id')
+  removeDrinkDetails(@Param('drink_id') drink_id: number){
+    return this.drinksService.removeDrinkDetails(+drink_id);
   }
 
 }
