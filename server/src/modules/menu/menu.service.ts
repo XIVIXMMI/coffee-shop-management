@@ -162,4 +162,21 @@ export class MenuService {
 
     return getMenuItem;
   }
+
+  async displayMenuDetails() {
+    const getMenuItem = await this.prisma.menu.findMany({
+      include: {
+        menudetails: {
+          include: {
+            drink: true
+          }
+        }
+      }
+    });
+    if (!getMenuItem) {
+      throw new ErrorCustom(ERROR_RESPONSE.MenuIsNotExisted);
+    }
+
+    return getMenuItem;
+  }
 }
