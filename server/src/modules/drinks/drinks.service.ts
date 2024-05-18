@@ -147,7 +147,8 @@ export class DrinksService {
     const formattedDetails = drinkDetails.reduce((accumulator,currentValue) => {
       const {drink_id, ingredient_id, ingredient_weight} = currentValue;
       let details = accumulator.find(item => item.drink_id === drink_id);
-
+      console.log(details);
+      
       // Nếu không tìm thấy drink_id trong acc tạo mới một đối tượng {drink_id, drink_details: []} và đẩy vào accumulator
       if(!details){
         details = {drink_id, drink_details: []};
@@ -166,47 +167,7 @@ export class DrinksService {
 
   async updateDrinkDetailDto(drink_id: number, ingredient_id: number, drinksDetails: DrinkDetailsDto) {
     try {
-      const findDrink = await this.prisma.drink.findUnique({
-        where: {
-          drink_id: +drink_id
-        }
-      });
-      if (!findDrink) {
-        throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
-      }
-      const findIngre = await this.prisma.ingredient.findUnique({
-        where: {
-          ingredient_id: +ingredient_id
-        }
-      });
-      if (!findIngre) {
-        throw new ErrorCustom(ERROR_RESPONSE.IngredientIsNotExisted)
-      }
-      const findDrinkDetails = await this.prisma.drinksDetails.findUnique({
-        where: {
-          drink_id_ingredient_id: {
-            drink_id: +drink_id, 
-            ingredient_id: +ingredient_id
-          }
-        }
-      });
-      if(!findDrinkDetails){
-        throw new ErrorCustom(ERROR_RESPONSE.ItemIsNotExisted);
-      }
-      const ingredientWeightInKg = drinksDetails.ingredient_weight / 1000;
-      const updatedDrinkDetail = await this.prisma.drinksDetails.update({
-        where: {
-          drink_id_ingredient_id: {
-            drink_id: +drink_id,
-            ingredient_id: +ingredient_id
-          }
-        },
-        data: {
-          ingredient_id: +drinksDetails.ingredient_id,
-          ingredient_weight: +ingredientWeightInKg
-        },
-      });
-      return updatedDrinkDetail;
+      
     } catch (error) {
       console.error('Error updating drink details:', error.message);
       throw new Error(`Failed to update drink details: ${error.message}`);

@@ -11,10 +11,12 @@ export class UpdateMenuDto {
 export class MenuDetails {
     drink_id: number;
     drink_id_update: number
+    
 }
 
 export class  UpdateMenuDetailDto{
 
     @ApiProperty({ example: 1, description: 'Drink ID of the menu' })
     menu_details: MenuDetails[];
+    menu_name: string
 }

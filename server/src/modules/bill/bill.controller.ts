@@ -16,6 +16,13 @@ export class BillController {
     return this.billService.create(createBillDto,request.user.user_id);
   }
 
+  @Post('statictical')
+  statictical(@Body('toDateInput') toDateInput : string , @Body('fromDateInput') fromDateInput: string) {
+    //console.log(toDateInput,fromDateInput);
+
+    return this.billService.statistical(fromDateInput,toDateInput );
+  }
+
   @Get()
   findAll() {
     return this.billService.findAll();

@@ -203,47 +203,60 @@ export class BillService {
   }
 
   async statistical(fromDate: string | null, toDate: string | null) {
+    // Nếu cả fromDate và toDate đều không có giá trị, trả về tất cả các hóa đơn
     if (!fromDate && !toDate) {
       const allBills = await this.findAll();
       return allBills;
     }
 
+    // Chuyển đổi fromDate và toDate thành đối tượng Date nếu có giá trị
     const fromDateValue = fromDate ? new Date(fromDate) : null;
-    const toDateValue = toDate ? new Date(toDate ) : null;
+    const toDateValue = toDate ? new Date(toDate) : null;
 
+    // Điều chỉnh ngày nếu cần
     if (fromDateValue) {
       fromDateValue.setDate(fromDateValue.getDate() - 1);
-  }
-  if (toDateValue) {
+    }
+    if (toDateValue) {
       toDateValue.setDate(toDateValue.getDate() + 1);
-  }
+    }
+
+    // Truy vấn các hóa đơn trong khoảng thời gian từ fromDate đến toDate
     const listBill = await this.prisma.bill.findMany({
       where: {
-
         bill_date: {
-          gte: fromDateValue ||  undefined,
+          gte: fromDateValue || undefined,
           lte: toDateValue || undefined
         },
       },
       include: {
         billdetails: {
-          include:{
+          include: {
             drink: true
           }
         }
       }
     });
-     let totalPriceAll = 0
-    //  let totaleUserCreate = 0
-    //  const usersCounts = {}
-     const drinkCounts = {};
-     listBill.forEach(bill => {
-      totalPriceAll += bill.total_price; 
-      bill.billdetails.forEach(detail => {
-          const drinkName = detail.drink.drink_name;
-          drinkCounts[drinkName] = (drinkCounts[drinkName] || 0) + detail.quantity; 
 
+    // Tính tổng giá trị và số lượng đồ uống
+    let totalPriceAll = 0;
+    const drinkCounts = {};
+
+    listBill.forEach(bill => {
+      totalPriceAll += bill.total_price;
+      bill.billdetails.forEach(detail => {
+        const drinkName = detail.drink.drink_name;
+        if (!drinkCounts[drinkName]) {
+          drinkCounts[drinkName] = 0;
+        }
+        drinkCounts[drinkName] += detail.quantity;
       });
-  });
-  }
+    });
+
+    // Trả về thông tin thống kê
+    return {
+      totalPriceAll,
+      drinkCounts
+    };
+}
 }

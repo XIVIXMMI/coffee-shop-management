@@ -73,7 +73,18 @@ export class MenuService {
   }
 
   async updateMenuDetails(id: number, updateMenuDetailDto: UpdateMenuDetailDto) {
+    let updateNameMenu 
 
+    if(updateMenuDetailDto.menu_name){
+      updateNameMenu = await this.prisma.menu.update({
+          where:{
+             menu_id: +id
+          },
+          data:{
+            menu_name:updateMenuDetailDto.menu_name
+          }
+        })
+    }
 
     if (!updateMenuDetailDto || !updateMenuDetailDto.menu_details) {
       throw new Error('Invalid data provided');
@@ -87,8 +98,7 @@ export class MenuService {
       });
       
       const listAll = await this.displayMenuItem(id)
-      const checkDB =listAll.menudetails.filter(checks => checks.drink_id === +items.drink_id_update)
-      
+      const checkDB =listAll.menudetails.filter(checks => checks.drink_id === +items.drink_id_update) 
       if (checkDrinkDetails) {
         if(checkDB.length ===0 ){
           const listUpdate = await this.prisma.menuDetails.update({
@@ -113,7 +123,10 @@ export class MenuService {
       }
     })
     const updatedDetails = await Promise.all(updateMenuDetails);
-    return updatedDetails;
+    return {
+      updateNameMenu,
+      updatedDetails
+    };
 
   }
 
