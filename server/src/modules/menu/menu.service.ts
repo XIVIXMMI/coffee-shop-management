@@ -73,17 +73,17 @@ export class MenuService {
   }
 
   async updateMenuDetails(id: number, updateMenuDetailDto: UpdateMenuDetailDto) {
-    let updateNameMenu 
+    let updateNameMenu
 
-    if(updateMenuDetailDto.menu_name){
+    if (updateMenuDetailDto.menu_name) {
       updateNameMenu = await this.prisma.menu.update({
-          where:{
-             menu_id: +id
-          },
-          data:{
-            menu_name:updateMenuDetailDto.menu_name
-          }
-        })
+        where: {
+          menu_id: +id
+        },
+        data: {
+          menu_name: updateMenuDetailDto.menu_name
+        }
+      })
     }
 
     if (!updateMenuDetailDto || !updateMenuDetailDto.menu_details) {
@@ -96,11 +96,11 @@ export class MenuService {
           drink_id: +items.drink_id
         }
       });
-      
+
       const listAll = await this.displayMenuItem(id)
-      const checkDB =listAll.menudetails.filter(checks => checks.drink_id === +items.drink_id_update) 
+      const checkDB = listAll.menudetails.filter(checks => checks.drink_id === +items.drink_id_update)
       if (checkDrinkDetails) {
-        if(checkDB.length ===0 ){
+        if (checkDB.length === 0) {
           const listUpdate = await this.prisma.menuDetails.update({
             where: {
               menu_id_drink_id: {
@@ -114,8 +114,8 @@ export class MenuService {
           })
           return listUpdate
         }
-        else{
-           throw new ErrorCustom(ERROR_RESPONSE.BillIsNotExisted)
+        else {
+          throw new ErrorCustom(ERROR_RESPONSE.BillIsNotExisted)
         }
       }
       else {

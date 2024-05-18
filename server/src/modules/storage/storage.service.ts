@@ -12,7 +12,7 @@ export class StorageService {
   async create(createStorageDto: CreateStorageDto, createdBy: number) {
     const { goods_name, arrival_date, cost_price, quantity, goods_unit, equipmenttype_id } = createStorageDto;
 
-    let newGoods; 
+    let newGoods;
     const existingItem = await this.prisma.storage.findFirst({
       where: {
         goods_name: createStorageDto.goods_name
@@ -26,7 +26,7 @@ export class StorageService {
         },
         data: {
           quantity: existingItem.quantity + createStorageDto.quantity,
-          arrival_date: new Date(), 
+          arrival_date: new Date(),
         }
       });
     } else {
@@ -78,7 +78,7 @@ export class StorageService {
     });
   }
 
-  displayError(){
+  displayError() {
     throw new ErrorCustom(ERROR_RESPONSE.ItemIsNotExisted);
   }
 
@@ -98,7 +98,7 @@ export class StorageService {
 
   async findOne(id: number) {
     const findItem = await this.findObject(id);
-    if(!findItem){
+    if (!findItem) {
       this.displayError();
     }
     const goods = await this.prisma.storage.findUnique({
@@ -112,15 +112,16 @@ export class StorageService {
 
   async update(id: number, updateStorageDto: UpdateStorageDto) {
     const findItem = await this.findObject(id);
-    if(!findItem){
+    if (!findItem) {
       this.displayError();
     }
     const update = this.prisma.storage.update({
       where: { storage_id: id },
-      data: {...updateStorageDto,
-        cost_price:+updateStorageDto.cost_price,
-        quantity:+updateStorageDto.quantity,
-        equipmenttype_id:+updateStorageDto.equipmenttype_id
+      data: {
+        ...updateStorageDto,
+        cost_price: +updateStorageDto.cost_price,
+        quantity: +updateStorageDto.quantity,
+        equipmenttype_id: +updateStorageDto.equipmenttype_id
       }
     });
     return update;
@@ -128,7 +129,7 @@ export class StorageService {
 
   async softDelete(id: number) {
     const findItem = await this.findObject(id);
-    if(!findItem){
+    if (!findItem) {
       this.displayError();
     }
     const hideItem = await this.prisma.storage.update({
@@ -138,13 +139,71 @@ export class StorageService {
     return hideItem;
   }
 
-
   async remove(id: number) {
     const findItem = await this.findObject(id);
-    if(!findItem){
+    if (!findItem) {
       this.displayError();
     }
     const remove = this.prisma.storage.delete({ where: { storage_id: id } });
     return remove;
   }
+
+  async statistical(fromDate: string | null, toDate: string | null) {
+    // Nếu cả fromDate và toDate đều không có giá trị, trả về tất cả các mặt hàng trong kho
+    if (!fromDate && !toDate) {
+      const allStorageItems = await this.prisma.storage.findMany();
+      return this.calculateStorageStatistics(allStorageItems);
+    }
+
+    // Chuyển đổi fromDate và toDate thành đối tượng Date nếu có giá trị
+    const fromDateValue = fromDate ? new Date(fromDate) : null;
+    const toDateValue = toDate ? new Date(toDate) : null;
+
+    // Điều chỉnh ngày nếu cần
+    if (fromDateValue) {
+      fromDateValue.setDate(fromDateValue.getDate() - 1);
+    }
+    if (toDateValue) {
+      toDateValue.setDate(toDateValue.getDate() + 1);
+    }
+
+    // Truy vấn các mặt hàng trong kho trong khoảng thời gian từ fromDate đến toDate
+    const storageItems = await this.prisma.storage.findMany({
+      where: {
+        arrival_date: {
+          gte: fromDateValue || undefined,
+          lte: toDateValue || undefined
+        },
+      }
+    });
+    return this.calculateStorageStatistics(storageItems);
+  }
+
+  private calculateStorageStatistics(storageItems: any[]) {
+    let totalQuantityAll = 0;
+    let totalCostPriceAll = 0;
+    const goodsCounts = {};
+
+    storageItems.forEach(item => {
+      totalQuantityAll += item.quantity;
+      totalCostPriceAll += item.quantity * item.cost_price;
+
+      const goodsName = item.goods_name;
+      if (!goodsCounts[goodsName]) {
+        goodsCounts[goodsName] = {
+          quantity: 0,
+          totalCostPrice: 0
+        };
+      }
+      goodsCounts[goodsName].quantity += item.quantity;
+      goodsCounts[goodsName].totalCostPrice += item.quantity * item.cost_price;
+    });
+
+    return {
+      totalQuantityAll,
+      totalCostPriceAll,
+      goodsCounts
+    };
+  }
+
 }
