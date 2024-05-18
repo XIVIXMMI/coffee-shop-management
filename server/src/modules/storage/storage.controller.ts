@@ -3,7 +3,7 @@ import { StorageService } from './storage.service';
 import { CreateStorageDto } from './dto/create-storage.dto';
 import { UpdateStorageDto } from './dto/update-storage.dto';
 import { JwtAuthGuard } from 'src/third-parties/guard/jwt-guard';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiBearerAuth()
 @ApiTags('storage')
@@ -42,4 +42,32 @@ export class StorageController {
   remove(@Param('id') id: string) {
     return this.storageService.remove(+id);
   }
+
+  @Post('statistical')
+  @ApiConsumes('application/json')
+  @ApiBody({ type: () => CreateStorageDto, isArray: true })
+  @ApiResponse({
+    status: 200,
+    description: 'Statistical data of storage',
+    schema: {
+      example: {
+        totalQuantityAll: 100,
+        totalCostPriceAll: 50000,
+        goodsCounts: {
+          "Coffee Beans": {
+            quantity: 50,
+            totalCostPrice: 25000
+          },
+          "Milk": {
+            quantity: 50,
+            totalCostPrice: 25000
+          }
+        }
+      }
+    }
+  })
+  async statistical(@Body('toDateInput') toDateInput: string, @Body('fromDateInput') fromDateInput: string) {
+    return this.storageService.statistical(fromDateInput, toDateInput);
+  }
+
 }

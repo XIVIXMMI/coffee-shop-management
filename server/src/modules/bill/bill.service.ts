@@ -115,17 +115,17 @@ export class BillService {
     });
   }
 
-  displayErrorMessage(){
+  displayErrorMessage() {
     throw new ErrorCustom(ERROR_RESPONSE.BillIsNotExisted);
   }
 
-  async findBillById(id: number){
+  async findBillById(id: number) {
     const bill = this.prisma.bill.findUnique({
       where: {
         bill_id: id
       }
     });
-    if(!bill){
+    if (!bill) {
       this.displayErrorMessage();
     }
     return bill;
@@ -133,7 +133,7 @@ export class BillService {
 
   async findOne(id: number) {
     const findBill = this.findBillById(id);
-    if(!findBill){
+    if (!findBill) {
       this.displayErrorMessage();
     }
     const bill = await this.prisma.bill.findUnique({
@@ -146,7 +146,7 @@ export class BillService {
 
   update(id: number, updateBillDto: UpdateBillDto) {
     const findBill = this.findBillById(id);
-    if(!findBill){
+    if (!findBill) {
       this.displayErrorMessage();
     }
     return this.prisma.bill.update({
@@ -171,7 +171,7 @@ export class BillService {
         price: true
       }
     })
-    if(!id){
+    if (!id) {
       throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
     }
     return id;
@@ -187,7 +187,7 @@ export class BillService {
         price: true
       }
     })
-    if(!drinkName){
+    if (!drinkName) {
       throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
     }
     return drinkName;
@@ -258,5 +258,5 @@ export class BillService {
       totalPriceAll,
       drinkCounts
     };
-}
+  }
 }
