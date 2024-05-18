@@ -202,4 +202,48 @@ export class BillService {
     return drinkId;
   }
 
+  async statistical(fromDate: string | null, toDate: string | null) {
+    if (!fromDate && !toDate) {
+      const allBills = await this.findAll();
+      return allBills;
+    }
+
+    const fromDateValue = fromDate ? new Date(fromDate) : null;
+    const toDateValue = toDate ? new Date(toDate ) : null;
+
+    if (fromDateValue) {
+      fromDateValue.setDate(fromDateValue.getDate() - 1);
+  }
+  if (toDateValue) {
+      toDateValue.setDate(toDateValue.getDate() + 1);
+  }
+    const listBill = await this.prisma.bill.findMany({
+      where: {
+
+        bill_date: {
+          gte: fromDateValue ||  undefined,
+          lte: toDateValue || undefined
+        },
+      },
+      include: {
+        billdetails: {
+          include:{
+            drink: true
+          }
+        }
+      }
+    });
+     let totalPriceAll = 0
+    //  let totaleUserCreate = 0
+    //  const usersCounts = {}
+     const drinkCounts = {};
+     listBill.forEach(bill => {
+      totalPriceAll += bill.total_price; 
+      bill.billdetails.forEach(detail => {
+          const drinkName = detail.drink.drink_name;
+          drinkCounts[drinkName] = (drinkCounts[drinkName] || 0) + detail.quantity; 
+
+      });
+  });
+  }
 }

@@ -61,14 +61,23 @@ export class DrinksService {
     return drinks;
   }
 
-  async update(id: number, updateDrinkDto: UpdateDrinkDto) {
+  async update(id: number, updateDrinkDto: UpdateDrinkDto, image_url: Express.Multer.File ) {
+    let imageUrl: string | undefined;
+    if (image_url) {
+      // Upload the image to Cloudinary and get the secure URL if an image is provided
+      const imageUploadResult = await this.cloudinaryService.uploadFile(image_url);
+      imageUrl = imageUploadResult.secure_url;
+
+
+    }
     const updateDrink = await this.prisma.drink.update({
       where: {
         drink_id: id
       },
       data: {
-        drink_name: updateDrinkDto.drink_name,
-        price: updateDrinkDto.price
+        ...updateDrinkDto,
+        ...(updateDrinkDto.price && { price: parseFloat(updateDrinkDto.price as any) }),
+         ...(imageUrl && { image_url: imageUrl })
       }
     });
     return updateDrink;

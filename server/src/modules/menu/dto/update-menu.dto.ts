@@ -2,15 +2,19 @@ import { PartialType } from '@nestjs/mapped-types';
 import { CreateMenuDto } from './create-menu.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdateMenuDetailDto {
+export class UpdateMenuDto {
 
     @ApiProperty({ example: 'Coffee Menu', description: 'Name of the coffee' })
-    menu_id_input: number;
+    menu_name: string;
 
-    @ApiProperty({ example: 1, description: 'Drink ID of the menu' })
-    drink_id_input: number;
+}
+export class MenuDetails {
+    drink_id: number;
+    drink_id_update: number
 }
 
-export class UpdateMenuDto extends PartialType(CreateMenuDto) {
+export class  UpdateMenuDetailDto{
 
+    @ApiProperty({ example: 1, description: 'Drink ID of the menu' })
+    menu_details: MenuDetails[];
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMenuDto } from './dto/create-menu.dto';
-import { UpdateMenuDetailDto, UpdateMenuDto } from './dto/update-menu.dto';
+import { UpdateMenuDto, UpdateMenuDetailDto } from './dto/update-menu.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ErrorCustom } from 'src/common/error.custom';
 import { ERROR_RESPONSE } from 'src/common/error.handle';
@@ -72,21 +72,49 @@ export class MenuService {
     });
   }
 
-  async updateMenuDetails(updateMenuDetails: UpdateMenuDetailDto, drink_id: number, menu_id: number) {
-    const { menu_id_input, drink_id_input } = updateMenuDetails;
-    const menu = await this.prisma.menuDetails.update({
-      where: {
-        menu_id_drink_id: {
-          drink_id,
-          menu_id
+  async updateMenuDetails(id: number, updateMenuDetailDto: UpdateMenuDetailDto) {
+
+
+    if (!updateMenuDetailDto || !updateMenuDetailDto.menu_details) {
+      throw new Error('Invalid data provided');
+    }
+    const updateMenuDetails = updateMenuDetailDto.menu_details.map(async (items) => {
+      const checkDrinkDetails = await this.prisma.menuDetails.findMany({
+        where: {
+          menu_id: +id,
+          drink_id: +items.drink_id
         }
-      },
-      data: {
-        menu_id: menu_id_input,
-        drink_id: drink_id_input
+      });
+      
+      const listAll = await this.displayMenuItem(id)
+      const checkDB =listAll.menudetails.filter(checks => checks.drink_id === +items.drink_id_update)
+      
+      if (checkDrinkDetails) {
+        if(checkDB.length ===0 ){
+          const listUpdate = await this.prisma.menuDetails.update({
+            where: {
+              menu_id_drink_id: {
+                menu_id: +id,
+                drink_id: +items.drink_id
+              }
+            },
+            data: {
+              drink_id: +items.drink_id_update
+            }
+          })
+          return listUpdate
+        }
+        else{
+           throw new ErrorCustom(ERROR_RESPONSE.BillIsNotExisted)
+        }
       }
-    });
-    return menu;
+      else {
+        throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted)
+      }
+    })
+    const updatedDetails = await Promise.all(updateMenuDetails);
+    return updatedDetails;
+
   }
 
   async remove(id: number) {
@@ -100,7 +128,7 @@ export class MenuService {
   async displayMenuItem(id: number) {
     const getMenuItem = await this.prisma.menu.findUnique({
       where: {
-        menu_id: id
+        menu_id: +id
       },
       include: {
         menudetails: {

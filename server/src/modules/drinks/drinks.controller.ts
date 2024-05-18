@@ -37,9 +37,13 @@ export class DrinksController {
     return this.drinksService.findOne(+id);
   }
 
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('image_url'))
+  @ApiBody({ type: UpdateDrinkDto})
+  @ApiResponse({ status: 200, type: UpdateDrinkDto })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDrinkDto: UpdateDrinkDto) {
-    return this.drinksService.update(+id, updateDrinkDto);
+  update(@Param('id') id: string, @Body() updateDrinkDto: UpdateDrinkDto, @UploadedFile() image: Express.Multer.File) {
+    return this.drinksService.update(+id, updateDrinkDto,image);
   }
 
   @Delete(':id')
