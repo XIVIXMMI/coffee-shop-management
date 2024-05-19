@@ -8,6 +8,8 @@ export class DrinkDetailsDto {
 
     @ApiProperty({ description: 'The weight of the ingredient in grams', example: 50 })
     ingredient_weight: number;
+
+    ingredient_id_update: number
 }
 
 export class UpdateDrinkDto {
