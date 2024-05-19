@@ -74,4 +74,9 @@ export class DrinksController {
     return this.drinksService.removeDrinkDetails(+drink_id);
   }
 
+  @Delete()
+  remover(){
+    
+  }
+
 }
