@@ -61,7 +61,7 @@ export class DrinksService {
     return drinks;
   }
 
-  async update(id: number, updateDrinkDto: UpdateDrinkDto, image_url: Express.Multer.File ) {
+  async update(id: number, updateDrinkDto: UpdateDrinkDto, image_url: Express.Multer.File) {
     let imageUrl: string | undefined;
     if (image_url) {
       // Upload the image to Cloudinary and get the secure URL if an image is provided
@@ -77,7 +77,7 @@ export class DrinksService {
       data: {
         ...updateDrinkDto,
         ...(updateDrinkDto.price && { price: parseFloat(updateDrinkDto.price as any) }),
-         ...(imageUrl && { image_url: imageUrl })
+        ...(imageUrl && { image_url: imageUrl })
       }
     });
     return updateDrink;
@@ -106,7 +106,7 @@ export class DrinksService {
         const existingDetail = await this.prisma.drinksDetails.findUnique({
           where: {
             drink_id_ingredient_id: {
-              drink_id: +drinkId,  
+              drink_id: +drinkId,
               ingredient_id: item.ingredient_id,
             }
           }
@@ -125,7 +125,7 @@ export class DrinksService {
         });
       });
       console.log(drinkId);
-      
+
       const details = await Promise.all(createDetailsPromises);
       return details;
     } catch (error) {
@@ -134,24 +134,24 @@ export class DrinksService {
     }
   }
 
-  async findAllDrinkDetails(){
+  async findAllDrinkDetails() {
     const drinkDetails = await this.prisma.drinksDetails.findMany(
-    //   {
-    //   include: {
-    //     drink: true,
-    //     ingredient: true
-    //   }
-    // }
-  );
+      //   {
+      //   include: {
+      //     drink: true,
+      //     ingredient: true
+      //   }
+      // }
+    );
 
-    const formattedDetails = drinkDetails.reduce((accumulator,currentValue) => {
-      const {drink_id, ingredient_id, ingredient_weight} = currentValue;
+    const formattedDetails = drinkDetails.reduce((accumulator, currentValue) => {
+      const { drink_id, ingredient_id, ingredient_weight } = currentValue;
       let details = accumulator.find(item => item.drink_id === drink_id);
       console.log(details);
-      
+
       // Nếu không tìm thấy drink_id trong acc tạo mới một đối tượng {drink_id, drink_details: []} và đẩy vào accumulator
-      if(!details){
-        details = {drink_id, drink_details: []};
+      if (!details) {
+        details = { drink_id, drink_details: [] };
         accumulator.push(details);
       }
 
@@ -161,20 +161,20 @@ export class DrinksService {
       });
 
       return accumulator;
-    },[]);
+    }, []);
     return formattedDetails;
   }
 
   async updateDrinkDetailDto(drink_id: number, ingredient_id: number, drinksDetails: DrinkDetailsDto) {
     try {
-      
+
     } catch (error) {
       console.error('Error updating drink details:', error.message);
       throw new Error(`Failed to update drink details: ${error.message}`);
     }
   }
 
-  async removeDrinkDetails (drink_id: number){
+  async removeDrinkDetails(drink_id: number) {
     try {
       const findDrink = await this.prisma.drink.findUnique({
         where: {
@@ -184,24 +184,26 @@ export class DrinksService {
       if (!findDrink) {
         throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
       }
+
       const findDrinkDetails = await this.prisma.drinksDetails.findMany({
         where: {
-            drink_id: +drink_id, 
+          drink_id: +drink_id,
         }
       });
-      if(!findDrinkDetails){
+      if (!findDrinkDetails) {
         throw new ErrorCustom(ERROR_RESPONSE.ItemIsNotExisted);
       }
+      
       const removeDetails = await this.prisma.drinksDetails.deleteMany({
         where: {
-            drink_id: drink_id,
-          }
-        
+          drink_id: drink_id,
+        }
+
       });
       return removeDetails;
     } catch (error) {
       console.error('Error deleting drink details:', error.message);
-      throw new Error(`Failed to deleting drink details: ${error.message}`);
+      throw new ErrorCustom(ERROR_RESPONSE.DeletingFailed);
     }
   }
 
