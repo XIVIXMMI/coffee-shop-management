@@ -8,7 +8,7 @@ export class CreateMenuDto {
     @IsString()
     menu_name: string;
 
-    @ApiProperty({ example: 1, description: 'Drink ID of the menu' })
+    @ApiProperty({ example: [{drink_id: 1},{drink_id: 2}], description: 'Drink ID of the menu' })
     @IsArray()
     @IsNotEmpty()
     menu_details: MenuDetails[];
