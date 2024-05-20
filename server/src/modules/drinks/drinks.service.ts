@@ -124,7 +124,6 @@ export class DrinksService {
           }
         });
       });
-      console.log(drinkId);
 
       const details = await Promise.all(createDetailsPromises);
       return details;
@@ -147,7 +146,6 @@ export class DrinksService {
     const formattedDetails = drinkDetails.reduce((accumulator, currentValue) => {
       const { drink_id, ingredient_id, ingredient_weight } = currentValue;
       let details = accumulator.find(item => item.drink_id === drink_id);
-      console.log(details);
 
       // Nếu không tìm thấy drink_id trong acc tạo mới một đối tượng {drink_id, drink_details: []} và đẩy vào accumulator
       if (!details) {
@@ -167,35 +165,12 @@ export class DrinksService {
 
   async updateDrinkDetailDto(drink_id: number, updateDrinkDetailDto: UpdateDrinkDetailDto) {
     try {
-      console.log(updateDrinkDetailDto.drink_details);
-      
       if (!updateDrinkDetailDto || !updateDrinkDetailDto.drink_details) {
         throw new Error('Invalid data provided');
       }
 
       const updateDrinkDetails = updateDrinkDetailDto.drink_details.map(async (items) => {
         const ingredientWeightInKg = +items.ingredient_weight / 1000;
-
-        if(items.ingredient_id === +items.ingredient_id_update){
-          const listUpdate = await this.prisma.drinksDetails.update({
-            where:{
-              drink_id_ingredient_id:{
-                    
-                    drink_id: +drink_id,
-                    ingredient_id: +items.ingredient_id
-              }
-            },
-            data:{
-              ...updateDrinkDetailDto,
-              ingredient_weight: +ingredientWeightInKg,
-            }
-          })
-          return listUpdate
-        }
-
-
-
-        else{
           const checkDrinkDetails = await this.prisma.drinksDetails.findMany({
             where: {
               drink_id: +drink_id,
@@ -205,31 +180,31 @@ export class DrinksService {
           const listAllDrinkDetails = await this.lisAllDrink(drink_id)
           const checkDB = listAllDrinkDetails.drinkdetails.filter(checks => checks.ingredient_id === +items.ingredient_id_update)
           if(checkDrinkDetails){
-            if(checkDB.length ===0){
+            // if(checkDB.length ===0){
               const listUpdate = await this.prisma.drinksDetails.update({
                 where:{
-                  drink_id_ingredient_id:{
-                        
+                  drink_id_ingredient_id:{          
                         drink_id: +drink_id,
                         ingredient_id: +items.ingredient_id
                   }
                 },
                 data:{
-                  ...updateDrinkDetailDto,
-                  ingredient_weight: +ingredientWeightInKg,
-                  ingredient_id: +items.ingredient_id_update
+                  // ingredient_weight: +ingredientWeightInKg || null,
+                  // ingredient_id: +items.ingredient_id_update,
+                  ...(items.ingredient_weight && {ingredient_weight: parseFloat(ingredientWeightInKg as any)}),
+                  ...(items.ingredient_id_update && {ingredient_id: parseInt(items.ingredient_id_update as any)})
                 }
               })
               return listUpdate
-            }
-            else{
-              throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted)
-            }
+            //}
+            // else{
+            //   throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted)
+            // }
           }
           else{
             throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted)
           }
-        }
+        
       
       })
       const updated = await Promise.all(updateDrinkDetails)

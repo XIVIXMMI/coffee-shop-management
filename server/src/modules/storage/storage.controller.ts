@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UseInterceptors } from '@nestjs/common';
 import { StorageService } from './storage.service';
 import { CreateStorageDto } from './dto/create-storage.dto';
 import { UpdateStorageDto } from './dto/update-storage.dto';
 import { JwtAuthGuard } from 'src/third-parties/guard/jwt-guard';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { FormDataInterceptor } from 'src/third-parties/interceptors/transform.interceptor';
 
 @ApiBearerAuth()
 @ApiTags('storage')
@@ -13,6 +14,7 @@ export class StorageController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FormDataInterceptor)
   create(@Body() createStorageDto: CreateStorageDto, @Req() request) {
     return this.storageService.create(createStorageDto,request.user.user_id);
   }
@@ -28,11 +30,13 @@ export class StorageController {
   }
 
   @Patch(':id')
+  @UseInterceptors(FormDataInterceptor)
   update(@Param('id') id: string, @Body() updateStorageDto: UpdateStorageDto) {
     return this.storageService.update(+id, updateStorageDto);
   }
 
   @Patch('softDelete/:id')
+  @UseInterceptors(FormDataInterceptor)
   softDelete(@Param('id') id: string) {
     return this.storageService.softDelete(+id);
   }

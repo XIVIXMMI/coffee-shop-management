@@ -22,7 +22,7 @@ export class MenuController {
   }
 
   @Get('/menu_details')
-  findOne() {
+  findOneee() {
     return this.menuService.displayMenuDetails();
   }
 
