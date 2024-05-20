@@ -216,6 +216,7 @@ export class DrinksService {
     }
   }
 
+
   async lisAllDrink(id: number) {
     const listAllDrinkDetails = await this.prisma.drink.findUnique({
       where: {
