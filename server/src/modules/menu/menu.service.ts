@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateMenuDto } from './dto/create-menu.dto';
+import { CreateMenuDto, MenuDetails } from './dto/create-menu.dto';
 import { UpdateMenuDto, UpdateMenuDetailDto } from './dto/update-menu.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ErrorCustom } from 'src/common/error.custom';
@@ -50,6 +50,10 @@ export class MenuService {
 
   findAll() {
     return this.prisma.menu.findMany();
+  }
+
+  displayError(){
+    throw new ErrorCustom(ERROR_RESPONSE.MenuIsNotExisted)
   }
 
   // async findOne(id: number) {
@@ -159,10 +163,40 @@ export class MenuService {
     if (!hasDetails) {
       throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
     }
-
     return getMenuItem;
   }
 
+  async removeMenuDetails(id: number){
+    try{
+
+      await this.checkIfMenuExisted(id);
+
+      const removeDetails = await this.prisma.menuDetails.deleteMany({
+        where: {
+          menu_id: id
+        }
+      });
+
+      return removeDetails;
+
+    }catch (error){
+      console.log('Error deleting recipe: ',error.message);
+      throw new ErrorCustom(ERROR_RESPONSE.DeletingFailed)
+    }
+  }
+
+  async checkIfMenuExisted(id: number){
+    const findMenu = await this.prisma.menu.findUnique({
+      where: {
+        menu_id: id
+      }
+    });
+    if(!findMenu){
+      this.displayError();
+    }
+    return findMenu;
+  }
+  
   async displayMenuDetails() {
     const getMenuItem = await this.prisma.menu.findMany({
       include: {
@@ -176,7 +210,6 @@ export class MenuService {
     if (!getMenuItem) {
       throw new ErrorCustom(ERROR_RESPONSE.MenuIsNotExisted);
     }
-
     return getMenuItem;
   }
 }

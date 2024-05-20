@@ -43,4 +43,9 @@ export class MenuController {
   remove(@Param('id') id: string) {
     return this.menuService.remove(+id);
   }
+
+  @Delete('menu_details/:menu_id')
+  removeMenuDetails(@Param('menu_id') id: number){
+    return this.menuService.removeMenuDetails(+id);
+  }
 }

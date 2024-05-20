@@ -17,10 +17,9 @@ type TErrorCode = 'PermissionDenied'
     |   'EquipmentTypeIsNotExisted'
     |   'NotEnoughWeight'
     |   'BillIsNotExisted'
-
-
-
-
+    |   'CreateFailed'
+    |   'UpdatingFailed'
+    |   'DeletingFailed'
 
 export interface IErrorResponse {
     statusCode: number;
@@ -88,7 +87,19 @@ export const ERROR_RESPONSE: Record<TErrorCode, IErrorResponse> = {
     BillIsNotExisted: {
         statusCode: HttpStatus.BAD_REQUEST,
         message: 'Bill is not existed'
-    }
+    },
+    CreateFailed: {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'creating is failed'
+    },
+    UpdatingFailed: {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'updating is failed'
+    },
+    DeletingFailed: {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'deleting is failed'
+    },
 }
 
 

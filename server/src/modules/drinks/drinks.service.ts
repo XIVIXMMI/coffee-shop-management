@@ -241,7 +241,6 @@ export class DrinksService {
     }
   }
 
-
   async lisAllDrink(id: number) {
     const listAllDrinkDetails = await this.prisma.drink.findUnique({
       where: {
@@ -268,6 +267,7 @@ export class DrinksService {
       if (!findDrink) {
         throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted);
       }
+
       const findDrinkDetails = await this.prisma.drinksDetails.findMany({
         where: {
           drink_id: +drink_id,
@@ -276,6 +276,7 @@ export class DrinksService {
       if (!findDrinkDetails) {
         throw new ErrorCustom(ERROR_RESPONSE.ItemIsNotExisted);
       }
+      
       const removeDetails = await this.prisma.drinksDetails.deleteMany({
         where: {
           drink_id: drink_id,
@@ -285,7 +286,7 @@ export class DrinksService {
       return removeDetails;
     } catch (error) {
       console.error('Error deleting drink details:', error.message);
-      throw new Error(`Failed to deleting drink details: ${error.message}`);
+      throw new ErrorCustom(ERROR_RESPONSE.DeletingFailed);
     }
   }
 
