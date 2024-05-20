@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, UseGuards } from '@nestjs/common';
 import { DrinksService } from './drinks.service';
 import { CreateDrinkDetailsDto, CreateDrinkDto } from './dto/create-drink.dto';
-import { DrinkDetailsDto, UpdateDrinkDto, UpdateDrinkDetailDto } from './dto/update-drink.dto';
+import { DrinkDetailsDto, UpdateDrinkDetailDto, UpdateDrinkDto } from './dto/update-drink.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/third-parties/guard/jwt-guard';

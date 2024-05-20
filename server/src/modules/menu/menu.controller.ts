@@ -21,9 +21,9 @@ export class MenuController {
     return this.menuService.findAll();
   }
 
-  @Get('/menu_details')
-  findOne() {
-    return this.menuService.displayMenuDetails();
+  @Get(':id')
+  findOne(@Param('id') id: number) {
+    return this.menuService.displayMenuItem(+id);
   }
 
   @Patch(':id')
