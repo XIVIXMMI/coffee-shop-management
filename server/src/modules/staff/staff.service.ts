@@ -80,7 +80,12 @@ export class StaffService {
     }
     const update = await this.prisma.staff.update({
       where: {staff_id: id, deleted: false},
-      data: updateStaffDto
+      data: {
+        ...updateStaffDto,
+        ...(updateStaffDto.birthday && {birthday: new Date(updateStaffDto.birthday as any)}),
+        ...(updateStaffDto.salary && {salary: parseFloat(updateStaffDto.salary as any)}),
+        ...(updateStaffDto.start_date && {start_date: new Date (updateStaffDto.start_date as any)})
+      }
     });
     return update;
   }

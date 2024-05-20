@@ -48,11 +48,15 @@ export class UsersService {
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
+
+    if (updateUserDto.phone_number && !updateUserDto.phone_number.startsWith('+84')) {
+      updateUserDto.phone_number = '+84' + updateUserDto.phone_number.replace(/^0+/, '');
+    }
+
     return this.prisma.user.update({
       where : {user_id: id},
       data: {
-        ...updateUserDto, 
-        phone_number: '+84' + updateUserDto.phone_number.replace(/^0+/, '')
+        ...updateUserDto
       }
     });
   }

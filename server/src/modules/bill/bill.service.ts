@@ -153,7 +153,10 @@ export class BillService {
       where: {
         bill_id: id
       },
-      data: updateBillDto
+      data: {
+        ... updateBillDto,
+        ...(updateBillDto.bill_date && {bill_date: new Date(updateBillDto.bill_date as any)}),
+      }
     });
   }
 

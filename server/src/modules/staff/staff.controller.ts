@@ -30,6 +30,7 @@ export class StaffController {
   }
 
   @Patch(':id')
+  @UseInterceptors(FormDataInterceptor)
   update(@Param('id') id: string, @Body() updateStaffDto: UpdateStaffDto) {
     return this.staffService.update(+id, updateStaffDto);
   }
