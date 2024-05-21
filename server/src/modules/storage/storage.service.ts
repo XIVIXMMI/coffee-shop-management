@@ -36,6 +36,8 @@ export class StorageService {
           ...createStorageDto,
           equipmenttype_id: createStorageDto.equipmenttype_id,
           created_by: createdBy,
+          arrival_date:new Date(),
+          cost_price:+createStorageDto.cost_price,
           deleted: false
         }
       });
