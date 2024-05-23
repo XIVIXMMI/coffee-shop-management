@@ -123,7 +123,8 @@ export class StorageService {
         ...updateStorageDto,
         cost_price: +updateStorageDto.cost_price,
         quantity: +updateStorageDto.quantity,
-        equipmenttype_id: +updateStorageDto.equipmenttype_id
+        equipmenttype_id: +updateStorageDto.equipmenttype_id,
+        ...(updateStorageDto.arrival_date && {arrival_date: new Date (updateStorageDto.arrival_date as any)})
       }
     });
     return update;
