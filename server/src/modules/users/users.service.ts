@@ -13,16 +13,28 @@ export class UsersService {
     const { username, password, phone_number, staff_id, role_id  } = createUserDto;
     await this.checkStaffId(staff_id);
     await this.checkStaffExisted(staff_id);
-    const newUser = await this.prisma.user.create({
-      data: {
-        username,
-        password,
-        phone_number: '+84' + phone_number.replace(/^0+/, ''),
-        staff_id,
-        role_id
-      },
-    });
-    return newUser;
+    
+    const checkPhone = await this.prisma.staff.findFirst({
+      where:{
+        phone_number: phone_number
+      }
+    })
+    if(checkPhone){
+      console.log("Phone Numer is existed");
+    }
+    
+    else{
+      const newUser = await this.prisma.user.create({
+        data: {
+          username,
+          password,
+          phone_number:  '+84' + phone_number.replace(/^0+/, ''),
+          staff_id,
+          role_id
+        },
+      });
+      return newUser;
+    }
   }
 
   findAll() {
