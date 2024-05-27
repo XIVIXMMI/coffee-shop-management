@@ -15,10 +15,10 @@ export class CreateStorageDto {
     @ApiProperty({ example: 'Coffee Beans', description: 'Name of the item' })
     goods_name: string;
 
-    @IsNotEmpty()
-    @IsDateString()
-    @ApiProperty({ example: '2024-01-01T00:00:00.000Z', description: 'Arrival date of the item' })
-    arrival_date: Date;
+    // @IsNotEmpty()
+    // @IsDateString()
+    // @ApiProperty({ example: '2024-01-01T00:00:00.000Z', description: 'Arrival date of the item' })
+    // arrival_date: Date;
 
     @IsNotEmpty()
     @IsNumber()

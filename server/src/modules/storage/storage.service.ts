@@ -10,7 +10,7 @@ export class StorageService {
   constructor(private prisma: PrismaService) { }
 
   async create(createStorageDto: CreateStorageDto, createdBy: number) {
-    const { goods_name, arrival_date, cost_price, quantity, goods_unit, equipmenttype_id } = createStorageDto;
+    const { goods_name, cost_price, quantity, goods_unit, equipmenttype_id } = createStorageDto;
 
     let newGoods;
     const existingItem = await this.prisma.storage.findFirst({
@@ -37,7 +37,7 @@ export class StorageService {
           ...createStorageDto,
           equipmenttype_id: createStorageDto.equipmenttype_id,
           created_by: createdBy,
-          arrival_date:new Date(arrival_date),
+          arrival_date:new Date(),
           cost_price:+createStorageDto.cost_price,
           deleted: false
         }
