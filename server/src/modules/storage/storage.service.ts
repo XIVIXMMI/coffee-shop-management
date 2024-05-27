@@ -20,7 +20,7 @@ export class StorageService {
     });
 
     if (existingItem) {
-      await this.prisma.storage.update({
+      const updateStorage=  await this.prisma.storage.update({
         where: {
           storage_id: existingItem.storage_id
         },
@@ -29,6 +29,7 @@ export class StorageService {
           arrival_date: new Date(),
         }
       });
+      return updateStorage
     } else {
       // Nếu không tìm thấy mục, tạo một mục mới
       newGoods = await this.prisma.storage.create({
@@ -36,7 +37,7 @@ export class StorageService {
           ...createStorageDto,
           equipmenttype_id: createStorageDto.equipmenttype_id,
           created_by: createdBy,
-          arrival_date:new Date(),
+          arrival_date:new Date(arrival_date),
           cost_price:+createStorageDto.cost_price,
           deleted: false
         }

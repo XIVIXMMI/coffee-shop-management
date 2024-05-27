@@ -496,36 +496,88 @@ async function main() {
         })
 
        
+         await prisma.bill.createMany({
+            data: [
+                {
+                    bill_date: new Date(),
+                    total_price: 35000.0,
+                    created_by: 1, 
+                },
+                {
+                    bill_date: new Date(),
+                    total_price: 60000.0,
+                    created_by: 1, 
+                }
+            ] 
+          });
+  
+          await prisma.billDetails.createMany({
+            data:[
+                {
+                    bill_id: 1,
+                    drink_id: 1, 
+                    price: 10000.0,
+                    quantity: 2,
+                },
+                {
+                    bill_id: 1,
+                    drink_id: 2, 
+                    price: 15000.0,
+                    quantity: 1,
+                },
+                {
+                    bill_id: 2,
+                    drink_id: 3, 
+                    price: 20000.0,
+                    quantity: 3,
+                  },
 
-        // await prisma.$transaction([
-        //     prisma.bill.create({
-        //         data: {
-        //             bill_date: new Date(),
-        //             total_price: 190000,
-        //             created_by: 3, 
-        //             billdetails: {
-        //                 create: [
-        //                     { drink_id: 1, price: 35000, quantity: 2 },
-        //                     { drink_id: 2, price: 40000, quantity: 3 }, 
-        //                 ]     
-        //             },
-        //         },
-        //     }),
-        //     prisma.bill.create({
-        //         data: {
-        //             bill_date: new Date(),
-        //             total_price: 80000,
-        //             created_by: 3, 
-        //             billdetails: {
-        //                 create: [
-        //                     { drink_id: 3, price: 25000, quantity: 2 }, 
-        //                     { drink_id: 4, price: 30000, quantity: 1 }, 
-        //                 ],
-        //             },
-        //         },
-        //     }),
+            ]
+          })
 
-        // ]);
+          await prisma.menu.createMany({
+            data: [
+                {
+                    menu_name: "Coffee menu"
+                },
+                {
+                    menu_name: "Juice menu"
+                }
+            ]
+          })
+
+
+          await prisma.menuDetails.createMany({
+            data:[
+                {
+                    menu_id: 1,
+                    drink_id: 1
+                },
+                {
+                    menu_id: 1,
+                    drink_id: 4
+                },
+                {
+                    menu_id: 1,
+                    drink_id: 5
+                },
+                
+                {
+                    menu_id: 2,
+                    drink_id: 2
+                },
+                {
+                    menu_id: 2,
+                    drink_id: 3
+                },
+                {
+                    menu_id: 2,
+                    drink_id: 6
+                },
+            ]
+          })
+
+
         console.log('Seed data created successfully');
     } catch (error) {
         console.error('Error creating seed data:', error);
