@@ -26,6 +26,7 @@ export class StorageService {
         },
         data: {
           quantity: existingItem.quantity + createStorageDto.quantity,
+          cost_price: +createStorageDto.cost_price,
           arrival_date: new Date(),
         }
       });

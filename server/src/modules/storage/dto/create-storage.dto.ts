@@ -2,11 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsInt, IsString, IsDecimal, IsDate, IsNotEmpty, IsDateString, IsNumber, IsEnum } from 'class-validator';
 
 enum GoodsUnit {
-    KILOGRAM = 'kilogram',
-    GRAM = 'gram',
-    LITTER = 'litter',
-    UNIT = 'unit',
-    HOUSEWARE = 'houseware'
+    Kilogram = 'Kilogram',
+    Gram = 'Gram',
+    Litter = 'Litter',
+    Unit = 'Unit',
+    Houseware = 'Houseware'
 }
 
 export class CreateStorageDto {
@@ -21,21 +21,21 @@ export class CreateStorageDto {
     // arrival_date: Date;
 
     @IsNotEmpty()
-    @IsNumber()
+   // @IsNumber()
     @ApiProperty({ example: '180000.0', description: 'Price of single item' })
     cost_price: number;
 
     @IsNotEmpty()
-    @IsInt()
+   // @IsInt()
     @ApiProperty({ example: '10', description: 'Quantity of the item' })
     quantity: number;
 
-    @IsEnum(GoodsUnit)
+   // @IsEnum(GoodsUnit)
     @ApiProperty({ example: 'kilogram', description: 'Weight/Unit of the item' })
     goods_unit: GoodsUnit;
 
-    @IsNotEmpty()
-    @IsInt()
+     @IsNotEmpty()
+    //@IsInt()
     @ApiProperty({ example: '1', description: 'Type of the item' })
     equipmenttype_id: number;
 

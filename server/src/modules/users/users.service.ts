@@ -14,7 +14,7 @@ export class UsersService {
     await this.checkStaffId(staff_id);
     await this.checkStaffExisted(staff_id);
     
-    const checkPhone = await this.prisma.staff.findFirst({
+    const checkPhone = await this.prisma.user.findFirst({
       where:{
         phone_number: phone_number
       }
