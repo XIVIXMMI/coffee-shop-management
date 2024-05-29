@@ -4,13 +4,13 @@ import { IsArray, IsInt, IsNotEmpty,IsNumber, IsString } from "class-validator";
 export class BillDetailsDto {
 
     @ApiProperty({ description: 'The name of the drink', example: 'Coffee' })
-    @IsNotEmpty()
-    @IsString()
+    // @IsNotEmpty()
+    // @IsString()
     drink_name: string;
 
     @ApiProperty({ description: 'The quantity of the drink', example: 2 })
-    @IsNotEmpty()
-    @IsNumber()
+    // @IsNotEmpty()
+    // @IsNumber()
     quantity: number;
 }
 

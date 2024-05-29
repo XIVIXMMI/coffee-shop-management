@@ -160,6 +160,24 @@ export class BillService {
     });
   }
 
+
+  
+  newupdate(id: number, updateBillDto: UpdateBillDto) {
+    const findBill = this.findBillById(id);
+    if (!findBill) {
+      this.displayErrorMessage();
+    }
+    return this.prisma.bill.update({
+      where: {
+        bill_id: id
+      },
+      data: {
+        ... updateBillDto,
+        ...(updateBillDto.bill_date && {bill_date: new Date(updateBillDto.bill_date as any)}),
+      }
+    });
+  }
+
   // remove(id: number) {
   //   return this.prisma.bill.delete({ where: { bill_id: id } });
   // }

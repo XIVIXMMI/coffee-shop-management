@@ -15,7 +15,7 @@ async function main() {
         await prisma.staff.createMany({
             data: [
                 {
-                    staff_name: 'John Doe',
+                    staff_name: 'Anh Duy',
                     gender: 'Male',
                     birthday: new Date('1990-01-01'),
                     address: '123 Main St, City',
@@ -27,7 +27,7 @@ async function main() {
                     deleted: false
                 },
                 {
-                    staff_name: 'Jane Smith',
+                    staff_name: 'Duy Tran',
                     gender: 'Female',
                     birthday: new Date('1995-05-15'),
                     address: '456 Elm St, City',
@@ -44,18 +44,18 @@ async function main() {
         await prisma.user.createMany({
             data: [
                 {
-                    username: 'john_doe',
+                    username: 'AnhDuy',
                     password: 'Aa@$dmin123',
                     phone_number: '+840934567890',
                     role_id: 1,
                     staff_id: 1,
                 },
                 {
-                    username: 'jane_smith',
+                    username: 'DuyTran',
                     password: 'Aa@$dmin123',
                     phone_number: '+849876543210',
                     role_id: 1,
-                    staff_id: 1,
+                    staff_id: 2,
                 },
 
             ],
@@ -66,32 +66,32 @@ async function main() {
                 {
                     drink_name: 'Espresso Coffee',
                     price: 40000,
-                    image_url: ' ',
+                    image_url: 'https://res.cloudinary.com/debdujr1m/image/upload/v1716972266/t0ptzeqpzrn7equhjjk4.jpg ',
                 },
                 {
                     drink_name: 'Matcha Tea',
                     price: 20000,
-                    image_url: ' ',
+                    image_url: 'https://res.cloudinary.com/debdujr1m/image/upload/v1716971850/ty7rghqtqljni8alodb8.jpg ',
                 },
                 {
                     drink_name: 'Orange Juice',
                     price: 40000,
-                    image_url: ' ',
+                    image_url: 'https://res.cloudinary.com/debdujr1m/image/upload/v1716971829/eljk9ycjoflcgbbbcchd.jpg ',
                 },
                 {
                     drink_name: 'Latte Coffee',
                     price: 45000,
-                    image_url: ' ',
+                    image_url: 'https://res.cloudinary.com/debdujr1m/image/upload/v1716971841/dosacyc4azr97vuiyy8m.jpg ',
                 },
                 {
                     drink_name: 'Cappuccino Coffee',
                     price: 45000,
-                    image_url: ' ',
+                    image_url: 'https://res.cloudinary.com/debdujr1m/image/upload/v1716971832/zdoggkoxu1nsn742h5nt.webp ',
                 },
                 {
                     drink_name: 'Lemonade',
                     price: 35000,
-                    image_url: ' ',
+                    image_url: 'https://res.cloudinary.com/debdujr1m/image/upload/v1716971177/mfbzz0qfjzotz3lgxdru.jpg ',
                 },
             ],
         });

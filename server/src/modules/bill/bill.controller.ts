@@ -5,6 +5,7 @@ import { UpdateBillDto } from './dto/update-bill.dto';
 import { JwtAuthGuard } from 'src/third-parties/guard/jwt-guard';
 import { ApiTags } from '@nestjs/swagger';
 import { FormDataInterceptor } from 'src/third-parties/interceptors/transform.interceptor';
+import { Roles } from 'src/third-parties/interceptor/role.interceptor';
 
 @ApiTags('bill')
 @Controller('bill')
@@ -27,6 +28,7 @@ export class BillController {
   }
 
   @Get()
+
   findAll() {
     return this.billService.findAll();
   }
