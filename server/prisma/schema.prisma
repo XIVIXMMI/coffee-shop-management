@@ -14,35 +14,57 @@ datasource db {
 }
 
 model User {
-  user_id         Int      @id @default(autoincrement())
-  username       String
-  password       String
-  phone_number   String   @unique
-  staff          Staff    @relation(fields: [staff_id], references: [staff_id])
-  role           Role     @relation(fields: [role_id], references: [role_id])
+  user_id          Int      @id @default(autoincrement())
+  username         String
+  password         String
+  phone_number     String   @unique
+  staff_id         Int
+  role_id          Int
 
-  role_id   Int
-  staff_id  Int
+  staff            Staff    @relation(fields: [staff_id], references: [staff_id])
+  role             Role     @relation(fields: [role_id], references: [role_id])
 
-  storageCreatedBy       Storage[]   @relation("CreatedBy")
+  storageCreatedBy Storage[] @relation("CreatedBy")
   storagesDeletedBy Storage[] @relation("DeletedBy")
-  billsCreatedBy        Bill[]    @relation("CreatedBy")
+  billsCreatedBy   Bill[]    @relation("CreatedBy")
+  
+  dailyrepots DailyReport[]
 }
 
 model Staff {
   staff_id      Int      @id @default(autoincrement())
-  staff_name   String
-  gender       String
-  birthday     DateTime
-  address      String
-  phone_number String
-  email        String
-  position     String
-  salary       Float
-  start_date   DateTime
-  deleted      Boolean
-  users  User []  
-  
+  staff_name    String
+  gender        String
+  birthday      DateTime
+  address       String
+  phone_number  String
+  email         String
+  position      String
+  salary        Float
+  start_date    DateTime
+  deleted       Boolean
+  users         User[]
+ attendances Attendance[]
+}
+
+model Attendance {
+  attendance_id Int       @id @default(autoincrement())
+  staff_id      Int
+  date          DateTime
+  check_in_time DateTime?
+  check_out_time DateTime?
+  status        String?
+  notes         String?
+  staff         Staff     @relation(fields: [staff_id], references: [staff_id])
+}
+
+model DailyReport {
+  report_id     Int       @id @default(autoincrement())
+  date          DateTime
+  content       String
+  created_at    DateTime  @default(now())
+  user_id       Int
+  user         User    @relation(fields: [user_id], references: [user_id])
 }
 
 model Role {

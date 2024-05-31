@@ -184,7 +184,7 @@ export class StorageService {
     return this.calculateStorageStatistics(storageItems);
   }
 
-  private calculateStorageStatistics(storageItems: any[]) {
+  public calculateStorageStatistics(storageItems: any[]) {
     let totalQuantityAll = 0;
     let totalCostPriceAll = 0;
     const goodsCounts = {};

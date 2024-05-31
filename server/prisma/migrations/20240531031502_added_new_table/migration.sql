@@ -4,8 +4,8 @@ CREATE TABLE `User` (
     `username` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
     `phone_number` VARCHAR(191) NOT NULL,
-    `role_id` INTEGER NOT NULL,
     `staff_id` INTEGER NOT NULL,
+    `role_id` INTEGER NOT NULL,
 
     UNIQUE INDEX `User_phone_number_key`(`phone_number`),
     PRIMARY KEY (`user_id`)
@@ -23,8 +23,33 @@ CREATE TABLE `Staff` (
     `position` VARCHAR(191) NOT NULL,
     `salary` DOUBLE NOT NULL,
     `start_date` DATETIME(3) NOT NULL,
+    `deleted` BOOLEAN NOT NULL,
 
     PRIMARY KEY (`staff_id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Attendance` (
+    `attendance_id` INTEGER NOT NULL AUTO_INCREMENT,
+    `staff_id` INTEGER NOT NULL,
+    `date` DATETIME(3) NOT NULL,
+    `check_in_time` DATETIME(3) NULL,
+    `check_out_time` DATETIME(3) NULL,
+    `status` VARCHAR(191) NULL,
+    `notes` VARCHAR(191) NULL,
+
+    PRIMARY KEY (`attendance_id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `DailyReport` (
+    `report_id` INTEGER NOT NULL AUTO_INCREMENT,
+    `date` DATETIME(3) NOT NULL,
+    `content` VARCHAR(191) NOT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `user_id` INTEGER NOT NULL,
+
+    PRIMARY KEY (`report_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -40,8 +65,8 @@ CREATE TABLE `Storage` (
     `storage_id` INTEGER NOT NULL AUTO_INCREMENT,
     `goods_name` VARCHAR(191) NOT NULL,
     `arrival_date` DATETIME(3) NOT NULL,
-    `cost_price` DECIMAL(65, 30) NOT NULL,
-    `quantity` INTEGER NOT NULL,
+    `cost_price` DOUBLE NOT NULL,
+    `quantity` DOUBLE NOT NULL,
     `goods_unit` VARCHAR(191) NOT NULL,
     `user_id` INTEGER NOT NULL,
     `user_id_deleted` INTEGER NULL,
@@ -90,6 +115,7 @@ CREATE TABLE `Ingredient` (
 CREATE TABLE `DrinksDetails` (
     `drink_id` INTEGER NOT NULL,
     `ingredient_id` INTEGER NOT NULL,
+    `ingredient_weight` DOUBLE NOT NULL,
 
     PRIMARY KEY (`drink_id`, `ingredient_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -98,7 +124,8 @@ CREATE TABLE `DrinksDetails` (
 CREATE TABLE `Drink` (
     `drink_id` INTEGER NOT NULL AUTO_INCREMENT,
     `drink_name` VARCHAR(191) NOT NULL,
-    `price` DECIMAL(65, 30) NOT NULL,
+    `price` DOUBLE NOT NULL,
+    `image_url` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`drink_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -115,7 +142,6 @@ CREATE TABLE `MenuDetails` (
 CREATE TABLE `Menu` (
     `menu_id` INTEGER NOT NULL AUTO_INCREMENT,
     `menu_name` VARCHAR(191) NOT NULL,
-    `image_url` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`menu_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -124,7 +150,7 @@ CREATE TABLE `Menu` (
 CREATE TABLE `Bill` (
     `bill_id` INTEGER NOT NULL AUTO_INCREMENT,
     `bill_date` DATETIME(3) NOT NULL,
-    `total_price` DECIMAL(65, 30) NOT NULL,
+    `total_price` DOUBLE NOT NULL,
     `user_id` INTEGER NOT NULL,
 
     PRIMARY KEY (`bill_id`)
@@ -134,7 +160,7 @@ CREATE TABLE `Bill` (
 CREATE TABLE `BillDetails` (
     `bill_id` INTEGER NOT NULL,
     `drink_id` INTEGER NOT NULL,
-    `price` DECIMAL(65, 30) NOT NULL,
+    `price` DOUBLE NOT NULL,
     `quantity` INTEGER NOT NULL,
 
     PRIMARY KEY (`bill_id`, `drink_id`)
@@ -145,6 +171,12 @@ ALTER TABLE `User` ADD CONSTRAINT `User_staff_id_fkey` FOREIGN KEY (`staff_id`) 
 
 -- AddForeignKey
 ALTER TABLE `User` ADD CONSTRAINT `User_role_id_fkey` FOREIGN KEY (`role_id`) REFERENCES `Role`(`role_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Attendance` ADD CONSTRAINT `Attendance_staff_id_fkey` FOREIGN KEY (`staff_id`) REFERENCES `Staff`(`staff_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `DailyReport` ADD CONSTRAINT `DailyReport_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`user_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Storage` ADD CONSTRAINT `Storage_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`user_id`) ON DELETE RESTRICT ON UPDATE CASCADE;

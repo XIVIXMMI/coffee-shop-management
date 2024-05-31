@@ -19,7 +19,7 @@ async function main() {
                     gender: 'Male',
                     birthday: new Date('1990-01-01'),
                     address: '123 Main St, City',
-                    phone_number: '123456789',
+                    phone_number: '+84934567890',
                     email: 'john@example.com',
                     position: 'Manager',
                     salary: 50000.0,
@@ -31,7 +31,7 @@ async function main() {
                     gender: 'Female',
                     birthday: new Date('1995-05-15'),
                     address: '456 Elm St, City',
-                    phone_number: '987654321',
+                    phone_number: '+849876543210',
                     email: 'jane@example.com',
                     position: 'Sales Associate',
                     salary: 30000.0,
@@ -576,6 +576,46 @@ async function main() {
                 },
             ]
           })
+
+           // Lấy thời gian hiện tại
+       
+          await prisma.attendance.createMany({
+            data:[
+                {
+                    staff_id: 1,
+                    date: new Date("2024-05-30"),
+                    check_in_time: new Date(),
+                    status: 'Check In',
+                    notes: 'Checked in on time'
+                },
+                {
+                    staff_id: 1,
+                    date: new Date(),
+                    check_out_time:  new Date(),
+                    status: 'Check Out',
+                    notes: 'Checked in on time'
+                },
+
+            ]
+          })
+          await prisma.dailyReport.createMany({
+            data:[
+                {
+                    date: new Date(),
+                    content: "đủ tiền hôm nay",
+                    created_at:new Date(),
+                    user_id: 1
+                },
+                {
+                    date: new Date(),
+                    content: "Vỡ 2 cái ly thuỷ tinh",
+                    created_at:new Date(),
+                    user_id: 1
+                }
+            ]
+          })
+
+
 
 
         console.log('Seed data created successfully');

@@ -9,8 +9,13 @@ export class ErrorCustom extends HttpException {
     }
 }
 
-export class SuccessCustom extends HttpException {
-    constructor(resp: BaseResponse, data?: any) {
-        super(resp, resp.statusCode);
+export class SuccessCustom  {
+    constructor(res: BaseResponse, data?: any) {
+        this.statusCode = res.statusCode
+        this.message = res.message
+        this.data = data
     }
+    statusCode: number;
+    message: string;
+    data?: any
 }
