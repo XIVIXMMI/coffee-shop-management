@@ -19,7 +19,8 @@ export class AuthService {
     }
 
     async login(user: User): Promise<string> {
-        const payload = {user_id: user.user_id, phone_number: user.phone_number, role_id: user.role_id };
+        const payload = {user_id: user.user_id, user_name: user.username
+            , phone_number: user.phone_number, role_id: user.role_id };
         const secret: string = process.env.accessToken;
         let expiresInRefreshToken = '1d'; 
     
