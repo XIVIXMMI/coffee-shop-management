@@ -19,6 +19,15 @@ export class StaffController {
     return this.staffService.create(createStaffDto);
   }
 
+  @Get("list_attedacce")
+  listAttandace(){
+      return this.staffService.listAttendance()
+  }
+
+  @Get("list_report")
+  listDailyReport(){
+      return this.staffService.listDailyReport()
+  }
 
   @Get("check")
   @UseGuards(JwtAuthGuard)

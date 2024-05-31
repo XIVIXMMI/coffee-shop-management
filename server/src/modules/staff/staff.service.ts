@@ -146,6 +146,22 @@ export class StaffService {
     }
   }
 
+  async listAttendance(){
+     try {
+        return await this.prisma.attendance.findMany()
+     } catch (error) {
+        throw new Error(error)
+     }
+  }
+
+  async listDailyReport(){
+    try {
+       return await this.prisma.dailyReport.findMany()
+    } catch (error) {
+       throw new Error(error)
+    }
+ }
+
   async checkOut(staff_id: number) {
     try {
       const timeStartWork = 12;

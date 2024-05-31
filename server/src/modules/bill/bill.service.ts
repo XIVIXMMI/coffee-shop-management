@@ -178,9 +178,38 @@ export class BillService {
     });
   }
 
-  // remove(id: number) {
-  //   return this.prisma.bill.delete({ where: { bill_id: id } });
-  // }
+ async remove(id: number) {
+    const findBill = await this.prisma.bill.findUnique(
+      { where: 
+        { bill_id: id },
+        include:{
+          billdetails: {
+            select:{
+              drink_id: true,
+              bill_id: true
+            },
+            include: {
+              drink: {
+                select:{
+                  drink_id:false,
+                  image_url: false
+                },
+                include:{
+                  drinkdetails: true
+                }
+              }
+            }
+          }
+        }
+      },
+      
+    );
+    if(!findBill){
+      throw new ErrorCustom(ERROR_RESPONSE.BillIsNotExisted)
+    }
+    return findBill
+   
+  }
 
   async findDrinkById(drink_id: number) {
     const id = await this.prisma.drink.findFirst({
