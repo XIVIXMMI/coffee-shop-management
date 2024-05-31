@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateBillDto } from './dto/create-bill.dto';
 import { UpdateBillDto } from './dto/update-bill.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ErrorCustom } from 'src/common/error.custom';
-import { ERROR_RESPONSE } from 'src/common/error.handle';
+import { ErrorCustom, SuccessCustom } from 'src/common/error.custom';
+import { ERROR_RESPONSE, SUCCESS_RESPONSE } from 'src/common/error.handle';
 
 @Injectable()
 export class BillService {
@@ -154,14 +154,14 @@ export class BillService {
         bill_id: id
       },
       data: {
-        ... updateBillDto,
-        ...(updateBillDto.bill_date && {bill_date: new Date(updateBillDto.bill_date as any)}),
+        ...updateBillDto,
+        ...(updateBillDto.bill_date && { bill_date: new Date(updateBillDto.bill_date as any) }),
       }
     });
   }
 
 
-  
+
   newupdate(id: number, updateBillDto: UpdateBillDto) {
     const findBill = this.findBillById(id);
     if (!findBill) {
@@ -172,43 +172,58 @@ export class BillService {
         bill_id: id
       },
       data: {
-        ... updateBillDto,
-        ...(updateBillDto.bill_date && {bill_date: new Date(updateBillDto.bill_date as any)}),
+        ...updateBillDto,
+        ...(updateBillDto.bill_date && { bill_date: new Date(updateBillDto.bill_date as any) }),
       }
     });
   }
 
- async remove(id: number) {
+  async remove(id: number) {
     const findBill = await this.prisma.bill.findUnique(
-      { where: 
-        { bill_id: id },
-        include:{
+      {
+        where:
+          { bill_id: id },
+        include: {
           billdetails: {
-            select:{
-              drink_id: true,
-              bill_id: true
-            },
-            include: {
-              drink: {
-                select:{
-                  drink_id:false,
-                  image_url: false
-                },
-                include:{
-                  drinkdetails: true
-                }
-              }
-            }
           }
         }
       },
-      
+
     );
-    if(!findBill){
+    if (!findBill) {
       throw new ErrorCustom(ERROR_RESPONSE.BillIsNotExisted)
     }
-    return findBill
-   
+
+     await Promise.all(findBill.billdetails.map(async (billDetail) => {
+      const drinkDetails = await this.prisma.drinksDetails.findMany({
+        where: { drink_id: billDetail.drink_id },
+        include: { ingredient: { include: { storage: true } } },
+      });
+      if(!drinkDetails){
+        throw new ErrorCustom(ERROR_RESPONSE.DrinksIsNotExisted)
+      }
+
+      await Promise.all(drinkDetails.map(async (drinkDetail) => {
+        const updatedQuantity = drinkDetail.ingredient.storage.quantity + (drinkDetail.ingredient_weight * billDetail.quantity); // Số lượng nguyên liệu cần cập nhật
+
+        await this.prisma.storage.update({
+          where: { storage_id: drinkDetail.ingredient.storage_id },
+          data: { quantity: updatedQuantity },
+        });
+      }))
+    }));
+
+    await this.prisma.billDetails.deleteMany({
+      where:{
+        bill_id: id
+      }
+    })
+    await this.prisma.bill.delete({
+      where:{
+        bill_id: id
+      }
+    })
+    return new SuccessCustom(SUCCESS_RESPONSE.ResponseSuccess)
   }
 
   async findDrinkById(drink_id: number) {

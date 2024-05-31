@@ -1,8 +1,8 @@
 import { SetMetadata } from '@nestjs/common';
 
 export enum Role {
-    Admin = 2,
-    Staff = 1
+    Admin = 1,
+    Staff = 2
 }
 
 

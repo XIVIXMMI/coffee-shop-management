@@ -19,6 +19,12 @@ export class StaffController {
     return this.staffService.create(createStaffDto);
   }
 
+  @Get("check_daily_report")
+  @UseGuards(JwtAuthGuard)
+  checkUserCreatedDailyReport(@Req() request){
+      return this.staffService.checkUserCreatedDailyReport(request.user.user_id)
+  }
+
   @Get("list_attedacce")
   listAttandace(){
       return this.staffService.listAttendance()
@@ -34,6 +40,10 @@ export class StaffController {
   checkUserCheckIn(@Req() request){
       return this.staffService.checkUserIsLogin(request.user.staff_id)
   }
+
+
+  
+  
 
   @Get()
   @UseGuards(JwtAuthGuard)

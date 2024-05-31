@@ -217,6 +217,29 @@ export class StaffService {
 
   }
 
+  async checkUserCreatedDailyReport(user_id: number){
+      try {
+        const now = new Date();
+      const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1); // Lấy ngày trước đó
+
+      const checkUserCreatedDailyReport = await this.prisma.dailyReport.findFirst({
+        where: {
+          user_id: +user_id,
+          created_at: {
+            gte: yesterday,
+            lt: now
+          },
+        }
+      });
+      if (!checkUserCreatedDailyReport) {
+        return false
+      }
+      return true
+      } catch (error) {
+        throw new Error(error)
+      }
+  }
+
 
   async createDailyReport(user_id: number, createDailyReportDto: CreateDailyReportDto) {
     try {
