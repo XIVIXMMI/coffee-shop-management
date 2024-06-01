@@ -120,7 +120,7 @@ export class StaffService {
 
       const checkUserLogin = await this.checkUserIsLoginAndLogOut(staff_id, CHECK_IN_STATUS)
       if(checkUserLogin){
-          throw new ErrorCustom(ERROR_RESPONSE.UserWasLogin)
+          return false
       }
       else{
         const timeStartWork = 9;
@@ -141,7 +141,7 @@ export class StaffService {
             notes: currentHour > timeStartWork || (currentHour === timeStartWork && currentMinutes > 0)? `Arrived ${timeLateHours} hour(s) and ${timeLateMinutes} minute(s) late` : "On time"
           }
         });
-        return checkIn;
+        return true
       }
     // } catch (error) {
     //   throw new Error(error);
@@ -169,7 +169,7 @@ export class StaffService {
 
       const checkUserLogout = await this.checkUserIsLoginAndLogOut(staff_id, CHECK_OUT_STATUS)
       if(checkUserLogout){
-          throw new ErrorCustom(ERROR_RESPONSE.UserWasLogout)
+          return false
       }
       else {
         const timeStartWork = 17;
@@ -193,7 +193,7 @@ export class StaffService {
             notes: timeLateHours > 0 || timeLateMinutes > 0 ? `Left ${timeLateHours - 1} hour(s) and ${60 - timeLateMinutes} minute(s) early` : "Left On time"
           }
         });
-        return checkOut;
+        return true;
       }
     // } catch (error) {
     //   throw new Error(error);
