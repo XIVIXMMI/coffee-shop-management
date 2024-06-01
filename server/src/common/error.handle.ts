@@ -20,6 +20,8 @@ type TErrorCode = 'PermissionDenied'
     |   'CreateFailed'
     |   'UpdatingFailed'
     |   'DeletingFailed'
+    |   'UserWasLogin'
+    |   "UserWasLogout"
 
 export interface IErrorResponse {
     statusCode: number;
@@ -100,6 +102,14 @@ export const ERROR_RESPONSE: Record<TErrorCode, IErrorResponse> = {
         statusCode: HttpStatus.BAD_REQUEST,
         message: 'deleting is failed'
     },
+    UserWasLogin:{
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'User was Log In'
+    },
+    UserWasLogout:{
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'User was Log Out'
+    }
 }
 
 

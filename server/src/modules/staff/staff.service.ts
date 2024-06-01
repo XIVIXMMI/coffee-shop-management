@@ -55,18 +55,18 @@ export class StaffService {
     });
   }
 
-  async findOne(id: number) {
-    const staff = await this.prisma.staff.findUnique({
-      where: {
-        staff_id: id,
-        deleted: false
-      }
-    });
-    if (!staff) {
-      this.displayError();
-    }
-    return staff;
-  }
+  // async findOne(id: number) {
+  //   const staff = await this.prisma.staff.findUnique({
+  //     where: {
+  //       staff_id: id,
+  //       deleted: false
+  //     }
+  //   });
+  //   if (!staff) {
+  //     this.displayError();
+  //   }
+  //   return staff;
+  // }
 
   async findObject(id: number) {
     const find = await this.prisma.staff.findUnique({
@@ -116,34 +116,36 @@ export class StaffService {
   }
 
   async checkIn(staff_id: number) {
-    try {
-      const timeStartWork = 9;
-      const now = new Date();
-      const currentHour = now.getHours();
-      const currentMinutes = now.getMinutes();
+    // try {
 
-      // Calculate late arrival time
-      let timeLateHours = Math.max(0, currentHour - timeStartWork);
-      let timeLateMinutes = currentMinutes;
-
-      if (timeLateHours > 0 && currentMinutes < 60) {
-        timeLateMinutes = 60 - currentMinutes;
-        timeLateHours--;
+      const checkUserLogin = await this.checkUserIsLoginAndLogOut(staff_id, CHECK_IN_STATUS)
+      if(checkUserLogin){
+          throw new ErrorCustom(ERROR_RESPONSE.UserWasLogin)
       }
-
-      const checkIn = await this.prisma.attendance.create({
-        data: {
-          date: now,
-          staff_id: +staff_id,
-          check_in_time: now,
-          status: CHECK_IN_STATUS,
-          notes: timeLateHours > 0 ? `Arrived ${timeLateHours} hour(s) and ${timeLateMinutes} minute(s) late` : "On time"
-        }
-      });
-      return checkIn;
-    } catch (error) {
-      throw new Error(error);
-    }
+      else{
+        const timeStartWork = 9;
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinutes = now.getMinutes();
+  
+        // Calculate late arrival time
+        let timeLateHours = Math.max(0, currentHour - timeStartWork);
+        let timeLateMinutes = currentMinutes;
+  
+        const checkIn = await this.prisma.attendance.create({
+          data: {
+            date: now,
+            staff_id: +staff_id,
+            check_in_time: now,
+            status: CHECK_IN_STATUS,
+            notes: currentHour > timeStartWork || (currentHour === timeStartWork && currentMinutes > 0)? `Arrived ${timeLateHours} hour(s) and ${timeLateMinutes} minute(s) late` : "On time"
+          }
+        });
+        return checkIn;
+      }
+    // } catch (error) {
+    //   throw new Error(error);
+    // }
   }
 
   async listAttendance(){
@@ -163,59 +165,88 @@ export class StaffService {
  }
 
   async checkOut(staff_id: number) {
-    try {
-      const timeStartWork = 12;
-      const now = new Date();
-      const currentHour = now.getHours();
-      const currentMinutes = now.getMinutes();
+    // try {
 
-      // Calculate late arrival time
-      let timeLateHours = Math.max(0, timeStartWork - currentHour);
-      let timeLateMinutes = currentMinutes;
-      if (currentHour > timeStartWork || (currentHour === timeStartWork && currentMinutes > 0)) {
-        timeLateHours = 0;
-        timeLateMinutes = 0;
+      const checkUserLogout = await this.checkUserIsLoginAndLogOut(staff_id, CHECK_OUT_STATUS)
+      if(checkUserLogout){
+          throw new ErrorCustom(ERROR_RESPONSE.UserWasLogout)
       }
-      const checkIn = await this.prisma.attendance.create({
-        data: {
-          date: now,
-          staff_id: +staff_id,
-          check_out_time: now,
-          status: CHECK_OUT_STATUS,
-          notes: timeLateHours > 0 || timeLateMinutes > 0 ? `Left ${timeLateHours - 1} hour(s) and ${60 - timeLateMinutes} minute(s) early` : "Left On time"
+      else {
+        const timeStartWork = 17;
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinutes = now.getMinutes();
+  
+        // Calculate late arrival time
+        let timeLateHours = Math.max(0, timeStartWork - currentHour);
+        let timeLateMinutes = currentMinutes;
+        if (currentHour > timeStartWork || (currentHour === timeStartWork && currentMinutes > 0)) {
+          timeLateHours = 0;
+          timeLateMinutes = 0;
         }
-      });
-      return checkIn;
-    } catch (error) {
-      throw new Error(error);
-    }
+        const checkOut = await this.prisma.attendance.create({
+          data: {
+            date: now,
+            staff_id: +staff_id,
+            check_out_time: now,
+            status: CHECK_OUT_STATUS,
+            notes: timeLateHours > 0 || timeLateMinutes > 0 ? `Left ${timeLateHours - 1} hour(s) and ${60 - timeLateMinutes} minute(s) early` : "Left On time"
+          }
+        });
+        return checkOut;
+      }
+    // } catch (error) {
+    //   throw new Error(error);
+    // }
   }
 
-  async checkUserIsLogin(staff_id) {
+  async checkUserIsLoginAndLogOut(staff_id, status) {
     try {
       const now = new Date();
       const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1); // Lấy ngày trước đó
 
-      const findUserCheckIn = await this.prisma.attendance.findFirst({
-        where: {
-          staff_id: +staff_id,
-          date: {
-            gte: yesterday,
-            lt: now
-          },
-          status: CHECK_IN_STATUS
+      if(status == CHECK_IN_STATUS){
+        const findUserCheckIn = await this.prisma.attendance.findFirst({
+          where: {
+            staff_id: +staff_id,
+            date: {
+              gte: yesterday,
+              lt: now
+            },
+            status: CHECK_IN_STATUS
+          }
+        });
+  
+        if (!findUserCheckIn) {
+          return false
         }
-      });
-
-      if (!findUserCheckIn) {
-        return false
+        return true
       }
-      return true
+      else if( status == CHECK_OUT_STATUS){
+        const findUserCheckOut = await this.prisma.attendance.findFirst({
+          where: {
+            staff_id: +staff_id,
+            date: {
+              gte: yesterday,
+              lt: now
+            },
+            status: CHECK_OUT_STATUS
+          }
+        });
+  
+        if (!findUserCheckOut) {
+          return false
+        }
+        return true
+      }
+
+      
     } catch (error) {
       throw new Error(error)
     }
 
   }
+
 
   async checkUserCreatedDailyReport(user_id: number){
       try {

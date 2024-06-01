@@ -35,11 +35,11 @@ export class StaffController {
       return this.staffService.listDailyReport()
   }
 
-  @Get("check")
-  @UseGuards(JwtAuthGuard)
-  checkUserCheckIn(@Req() request){
-      return this.staffService.checkUserIsLogin(request.user.staff_id)
-  }
+  // @Get("check")
+  // @UseGuards(JwtAuthGuard)
+  // checkUserCheckIn(@Req() request){
+  //     return this.staffService.checkUserIsLogin(request.user.staff_id)
+  // }
 
 
   
@@ -51,10 +51,10 @@ export class StaffController {
     return this.staffService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.staffService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.staffService.findOne(+id);
+  // }
 
   @Patch(':id')
   @UseInterceptors(FormDataInterceptor)
